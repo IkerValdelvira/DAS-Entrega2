@@ -331,7 +331,7 @@ public class SubirFotoActivity extends AppCompatActivity {
                 .observe(this, status -> {
                     if (status != null && status.getState().isFinished()) {
                         try {
-                            Thread.sleep(2000); // Delay para que se suba la foto a Firebase y se pueda cargar correctamente
+                            Thread.sleep(3000); // Delay para que se suba la foto a Firebase y se pueda cargar correctamente
                             Toast.makeText(this, getString(R.string.FotoSubida), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SubirFotoActivity.this, MainActivity.class);
                             intent.putExtra("usuario", usuario);

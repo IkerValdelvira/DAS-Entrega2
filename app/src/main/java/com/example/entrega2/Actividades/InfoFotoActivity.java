@@ -1,6 +1,7 @@
 package com.example.entrega2.Actividades;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
 import androidx.work.Data;
@@ -21,20 +22,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.entrega2.Dialogos.DialogoCompartirFoto;
 import com.example.entrega2.R;
 import com.example.entrega2.Workers.ActualizarFotoWorker;
 import com.example.entrega2.Workers.EliminarFotoWorker;
+import com.example.entrega2.Workers.GetAmigosParaCompartirWorker;
 import com.example.entrega2.Workers.GetFotoWorker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
-public class InfoFotoActivity extends AppCompatActivity {
+public class InfoFotoActivity extends AppCompatActivity implements DialogoCompartirFoto.ListenerdelDialogo{
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
@@ -226,5 +231,67 @@ public class InfoFotoActivity extends AppCompatActivity {
                 });
 
         WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    public void onClickCompartir(View v) {
+
+        Data datos = new Data.Builder()
+                .putString("usuario", usuario)
+                .putString("imagen", fotoID)
+                .build();
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetAmigosParaCompartirWorker.class)
+                .setConstraints(restricciones)
+                .setInputData(datos)
+                .build();
+
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(this, status -> {
+                    if (status != null && status.getState().isFinished()) {
+                        String result = status.getOutputData().getString("datos");
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+
+                            JSONArray amigos = jsonObject.getJSONArray("amigos");
+                            ArrayList<String> amigosList = new ArrayList<String>();
+                            for (int i=0; i<amigos.length(); i++) {
+                                amigosList.add(amigos.getString(i));
+                            }
+
+                            JSONArray compartidos = jsonObject.getJSONArray("compartidos");
+                            ArrayList<String> compartidosList = new ArrayList<String>();
+                            for (int i=0; i<compartidos.length(); i++) {
+                                compartidosList.add(compartidos.getString(i));
+                            }
+
+                            ArrayList<String> mostrar = new ArrayList<>();
+                            for (int i=0; i<amigosList.size(); i++) {
+                                if(!compartidosList.contains(amigosList.get(i))) {
+                                    mostrar.add(amigosList.get(i));
+                                }
+                            }
+
+                            if(mostrar.isEmpty()) {
+                                Toast.makeText(this, getString(R.string.NoAmigosCompartir), Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                // Se crea un diálogo DialogoAñadirFavoritos con las opciones de listas de favoritos para añadir la película actual
+                                DialogFragment dialogoCompartirFoto = new DialogoCompartirFoto(usuario, fotoID, mostrar, titulo);
+                                dialogoCompartirFoto.show(getSupportFragmentManager(), "compartir_foto");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    @Override
+    public void fotoCompartida() {
+        Toast.makeText(this, getString(R.string.FotoCompartida), Toast.LENGTH_SHORT).show();
     }
 }

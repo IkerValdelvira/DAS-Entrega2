@@ -12,8 +12,8 @@
     <string name="SubirFoto">Subir foto</string>
     <string name="DesdeCamara">Desde la cámara</string>
     <string name="DesdeGaleria">Desde la galería</string>
-    <string name="Albumes">Álbumes</string>
-    <string name="VerAlbumes">Ver álbumes</string>
+    <string name="Guardados">Guardados</string>
+    <string name="VerCompartidas">Ver compartidas conmigo</string>
     <string name="BuscarGente">Buscar gente</string>
     <string name="Amigos">Amigos</string>
     <string name="Idioma">Idioma</string>
@@ -107,5 +107,25 @@
     <string name="FotoEditada">Foto editada correctamente</string>
     <string name="Editar">Editar</string>
     <string name="FotoEliminada">Foto eliminada correctamente.</string>
+    <string name="FotosCompartidas">FOTOS COMPARTIDAS CONMIGO</string>
+    <string name="ConQuien">¿Con qué amigos quieres compartir la foto?</string>
+    <string name="FotoCompartida">Foto compartida.</string>
+    <string name="FotoNoCompartida">Foto no compartida.</string>
+    <string name="NoAmigosCompartir">No hay amigos para compartir la foto.</string>
+    <string name="NoFotosCompartidas">No te han compartido ninguna foto.</string>
+    <string name="CompartidaPor">Por:</string>
+    <string name="EliminarCompartida">Eliminar foto compartida</string>
+    <string name="SeguroEliminarCompartida">¿Estás seguro de que deseas eliminar esta foto compartida?</string>
+    <string name="CompartidaEliminada">Foto compartida eliminada.</string>
+    <string name="ComentarFoto">Comentar foto</string>
+    <string name="IntroduceComentario">Introduce un comentario para la foto:</string>
+    <string name="EscribirComentario">Escribir comentario...</string>
+    <string name="ComentarioEnviado">Comentario enviado.</string>
+    <string name="HaComentado">ha comentado en:</string>
+    <string name="Solicitud">Solicitud</string>
+    <string name="Comentario">Comentario</string>
+    <string name="FotoCompartidaNot">Te han compartido una foto</string>
+    <string name="HaCompartido">te ha compartido la foto</string>
+    <string name="TocaRevisarCompartidas">, toca para revisar las fotos compartidas.</string>
 
 </resources>

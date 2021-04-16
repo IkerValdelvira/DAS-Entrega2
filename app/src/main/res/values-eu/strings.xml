@@ -12,8 +12,8 @@
     <string name="SubirFoto">Argazki bat igo</string>
     <string name="DesdeCamara">Kameratik</string>
     <string name="DesdeGaleria">Galeriatik</string>
-    <string name="Albumes">Albumak</string>
-    <string name="VerAlbumes">Albumak ikusi</string>
+    <string name="Guardados">Gordetak</string>
+    <string name="VerCompartidas">Nirekin konpartituak ikusi</string>
     <string name="BuscarGente">Jendea bilatu</string>
     <string name="Amigos">Lagunak</string>
     <string name="Idioma">Hizkuntza</string>
@@ -107,5 +107,25 @@
     <string name="FotoEditada">Argazkia editatu da era egokia.</string>
     <string name="Editar">Editatu</string>
     <string name="FotoEliminada">Argazkia ezabatu da era egokia.</string>
+    <string name="FotosCompartidas">NIREKIN KONPARTITUTAKO ARGAZKIAK</string>
+    <string name="ConQuien">Zein lagunekin konpartitu nahi duzu argazkia?</string>
+    <string name="FotoCompartida">Argazkia konpartitu da.</string>
+    <string name="FotoNoCompartida">Argazkia ez da konpartitu.</string>
+    <string name="NoAmigosCompartir">Ez dago lagunik argazkia konpartitzeko.</string>
+    <string name="NoFotosCompartidas">Ez dizute argazkirik konpartitu.</string>
+    <string name="CompartidaPor">Nork:</string>
+    <string name="EliminarCompartida">Konpartitutako argazkia ezabatu</string>
+    <string name="SeguroEliminarCompartida">Ziur zaude argazki konpartitu hau ezabatu nahi duzula?</string>
+    <string name="CompartidaEliminada">Konpartitutako argazkia ezabatu da.</string>
+    <string name="ComentarFoto">Argazkia komentatu</string>
+    <string name="IntroduceComentario">Argazkiari komentario bat gehitu:</string>
+    <string name="EscribirComentario">Komentarioa idatzi...</string>
+    <string name="ComentarioEnviado">Komentarioa bidalia.</string>
+    <string name="HaComentado">komentatu du argazkian:</string>
+    <string name="Solicitud">Eskaera</string>
+    <string name="Comentario">Komentarioa</string>
+    <string name="FotoCompartidaNot">Argazki bat konpartitu dizute</string>
+    <string name="HaCompartido">konpartitu dizu argazkia</string>
+    <string name="TocaRevisarCompartidas">, jo ezazu konpartitutako argazkiak ikustera.</string>
 
 </resources>

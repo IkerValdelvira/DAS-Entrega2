@@ -14,12 +14,12 @@
                 android:title="@string/DesdeGaleria" />
         </menu>
     </item>
-    <item android:title="@string/Albumes">
+    <item android:title="@string/Guardados">
         <menu>
             <item
-                android:id="@+id/albumes"
+                android:id="@+id/compartidas"
                 android:icon="@android:drawable/ic_input_get"
-                android:title="@string/VerAlbumes" />
+                android:title="@string/VerCompartidas" />
             <item
                 android:id="@+id/puntos"
                 android:icon="@android:drawable/ic_dialog_map"

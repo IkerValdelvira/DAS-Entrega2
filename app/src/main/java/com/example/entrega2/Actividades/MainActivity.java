@@ -6,7 +6,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.Data;
@@ -24,22 +23,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.entrega2.Adaptadores.AdaptadorListViewAmigos;
-import com.example.entrega2.Adaptadores.AdaptadorRecycler;
+import com.example.entrega2.Adaptadores.AdaptadorRecyclerMisFotos;
 import com.example.entrega2.Preferencias;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.GetAmigosUsuarioWorker;
 import com.example.entrega2.Workers.GetFotosUsuarioWorker;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias {
@@ -52,9 +45,8 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
 
     // Para el RecyclerView
     private RecyclerView recyclerView;
-    private AdaptadorRecycler adaptador;            // Adaptador del RecyclerView
-    private LinearLayoutManager linearLayout;       // Layout para el RecyclerView
-    private GridLayoutManager gridLayout;
+    private AdaptadorRecyclerMisFotos adaptador;            // Adaptador del RecyclerView
+    private GridLayoutManager gridLayout;           // Layout para el RecyclerView
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +96,10 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
                        intent.putExtra("origen", "camara");
                        startActivity(intent);
                    }
-                   else if(item.getItemId() == R.id.albumes) {
-                       System.out.println("Opción navigation drawer ALBUMES");
+                   else if(item.getItemId() == R.id.compartidas) {
+                       Intent intent = new Intent(MainActivity.this, CompartidasActivity.class);
+                       intent.putExtra("usuario", usuario);
+                       startActivity(intent);
                    }
                    else if(item.getItemId() == R.id.puntos) {
                        Intent intent = new Intent(MainActivity.this, PuntosInteresActivity.class);
@@ -141,9 +135,7 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
 
         // Inicializacion RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
-        //linearLayout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);       // Los elementos se muestran de forma lineal vertical
-        //recyclerView.setLayoutManager(linearLayout);
-        gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
+        gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
         recyclerView.setLayoutManager(gridLayout);
 
         // Obtener las fotos
@@ -179,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
                                     titulos[i] = foto.getString("titulo");
                                     descripciones[i] = foto.getString("descripcion");
                                 }
-                                adaptador = new AdaptadorRecycler(this,usuario,ids,titulos);
+                                adaptador = new AdaptadorRecyclerMisFotos(this,usuario,ids,titulos);
                                 recyclerView.setAdapter(adaptador);
                             }
                         } catch (JSONException e) {

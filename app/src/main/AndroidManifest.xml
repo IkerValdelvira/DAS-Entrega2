@@ -20,7 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/CustomTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Actividades.AlbumesActivity"></activity>
+        <activity android:name=".Actividades.CompartidasActivity">
+            <intent-filter>
+                <action android:name="COMPARTIDAS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Actividades.UbicacionActivity" />
         <activity android:name=".Actividades.InfoFotoActivity" />
         <activity android:name=".Actividades.SubirFotoActivity" />
@@ -47,7 +52,6 @@
         <activity android:name=".Actividades.AnadirAmigoActivity">
             <intent-filter>
                 <action android:name="SOLICITUD" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -58,7 +62,6 @@
         <activity android:name=".Actividades.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

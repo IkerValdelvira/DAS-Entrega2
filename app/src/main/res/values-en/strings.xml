@@ -12,8 +12,8 @@
     <string name="SubirFoto">Upload picture</string>
     <string name="DesdeCamara">From camera</string>
     <string name="DesdeGaleria">From gallery</string>
-    <string name="Albumes">Collections</string>
-    <string name="VerAlbumes">Show collections</string>
+    <string name="Guardados">Saved</string>
+    <string name="VerCompartidas">Show shared with me</string>
     <string name="BuscarGente">Seach people</string>
     <string name="Amigos">Friends</string>
     <string name="Idioma">Language</string>
@@ -107,5 +107,25 @@
     <string name="FotoEditada">Picture edited succesfully.</string>
     <string name="Editar">Edit</string>
     <string name="FotoEliminada">Picture removed succesfully.</string>
+    <string name="FotosCompartidas">PICTURES SHARED WITH ME</string>
+    <string name="ConQuien">With which friends do you want to share the picture?</string>
+    <string name="FotoCompartida">Picture shared.</string>
+    <string name="FotoNoCompartida">Picture not shared.</string>
+    <string name="NoAmigosCompartir">There is no friend to share the picture.</string>
+    <string name="NoFotosCompartidas">They haven\'t shared any photos with you.</string>
+    <string name="CompartidaPor">By:</string>
+    <string name="EliminarCompartida">Remove shared picture</string>
+    <string name="SeguroEliminarCompartida">Are you sure you want to remove this picture?</string>
+    <string name="CompartidaEliminada">Shared picture removed.</string>
+    <string name="ComentarFoto">Comment picture</string>
+    <string name="IntroduceComentario">Insert comment to the picture:</string>
+    <string name="EscribirComentario">Write comment...</string>
+    <string name="ComentarioEnviado">Comment sent.</string>
+    <string name="HaComentado">has commented in:</string>
+    <string name="Solicitud">Request</string>
+    <string name="Comentario">Comment</string>
+    <string name="FotoCompartidaNot">A picture has been shared with you</string>
+    <string name="HaCompartido">has shared with you the picture</string>
+    <string name="TocaRevisarCompartidas">, tap to review shared pictures.</string>
 
 </resources>
