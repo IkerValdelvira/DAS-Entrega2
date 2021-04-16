@@ -92,5 +92,20 @@
     <string name="Subir">Upload</string>
     <string name="SacarOtra">Take another one</string>
     <string name="ElegirOtra">Choose another one</string>
+    <string name="MisFotos">MY PICTURES</string>
+    <string name="EscribeTitulo">Write a title to the picture.</string>
+    <string name="DescripcionLarga">The description must have less than 255 characters.</string>
+    <string name="NoFotosSubidas">There is no picture uploaded.</string>
+    <string name="InsertarGeolocalizacion">Insert current geolocation</string>
+    <string name="FotoSubida">Picture uploaded succesfully.</string>
+    <string name="InfoFoto">PICTURE INFORMATION</string>
+    <string name="TituloI">Title:</string>
+    <string name="DescripcionI">Description:</string>
+    <string name="FechaSubidaI">Upload date:</string>
+    <string name="MostrarEditarUbicacion">SHOW/EDIT LOCATION</string>
+    <string name="Guardar">Save</string>
+    <string name="FotoEditada">Picture edited succesfully.</string>
+    <string name="Editar">Edit</string>
+    <string name="FotoEliminada">Picture removed succesfully.</string>
 
 </resources>

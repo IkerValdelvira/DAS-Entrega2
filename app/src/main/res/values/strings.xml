@@ -91,5 +91,20 @@
     <string name="Subir">Subir</string>
     <string name="SacarOtra">Sacar otra</string>
     <string name="ElegirOtra">Elegir otra</string>
+    <string name="MisFotos">MIS FOTOS</string>
+    <string name="EscribeTitulo">Escribe un título a la foto.</string>
+    <string name="DescripcionLarga">La descripción debe tener menos de 255 caracteres.</string>
+    <string name="NoFotosSubidas">No hay ninguna foto subida.</string>
+    <string name="InsertarGeolocalizacion">Insertar geolocalización actual</string>
+    <string name="FotoSubida">Foto subida correctamente.</string>
+    <string name="InfoFoto">INFORMACIÓN DE LA FOTO</string>
+    <string name="TituloI">Título:</string>
+    <string name="DescripcionI">Descripción:</string>
+    <string name="FechaSubidaI">Fecha de subida:</string>
+    <string name="MostrarEditarUbicacion">MOSTRAR/EDITAR UBICACIÓN</string>
+    <string name="Guardar">Guardar</string>
+    <string name="FotoEditada">Foto editada correctamente.</string>
+    <string name="Editar">Editar</string>
+    <string name="FotoEliminada">Foto eliminada correctamente.</string>
 
 </resources>

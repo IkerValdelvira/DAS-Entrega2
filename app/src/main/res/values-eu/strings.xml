@@ -92,5 +92,20 @@
     <string name="Subir">Igo</string>
     <string name="SacarOtra">Beste bat atera</string>
     <string name="ElegirOtra">Beste bat aukeratu</string>
+    <string name="MisFotos">NIRE ARGAZKIAK</string>
+    <string name="EscribeTitulo">Idatzi izenburu bat argazkiari.</string>
+    <string name="DescripcionLarga">Deskripzioa 255 karaktere baino gutxiago izan behar ditu.</string>
+    <string name="NoFotosSubidas">Ez da argazkirik igo.</string>
+    <string name="InsertarGeolocalizacion">Oraingo geokokapena sartu</string>
+    <string name="FotoSubida">Argazkia igota era egokian.</string>
+    <string name="InfoFoto">ARGAZKIAREN INFORMAZIOA</string>
+    <string name="TituloI">Izenburua:</string>
+    <string name="DescripcionI">Deskripzioa:</string>
+    <string name="FechaSubidaI">Igotze-data:</string>
+    <string name="MostrarEditarUbicacion">KOKAPENA ERAKUTSI/EDITATU</string>
+    <string name="Guardar">Gorde</string>
+    <string name="FotoEditada">Argazkia editatu da era egokia.</string>
+    <string name="Editar">Editatu</string>
+    <string name="FotoEliminada">Argazkia ezabatu da era egokia.</string>
 
 </resources>

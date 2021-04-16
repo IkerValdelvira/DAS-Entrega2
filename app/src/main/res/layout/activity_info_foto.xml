@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Actividades.InfoFotoActivity">
+
+    <TextView
+        android:id="@+id/textView3"
+        style="@style/CustomStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/InfoFoto"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView102"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/DescripcionI"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextDescripcionI"
+        app:layout_constraintStart_toStartOf="@+id/textView101"
+        app:layout_constraintTop_toTopOf="@+id/editTextDescripcionI"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView101"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/FechaSubidaI"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewFechaI"
+        app:layout_constraintStart_toStartOf="@+id/textView100"
+        app:layout_constraintTop_toTopOf="@+id/textViewFechaI" />
+
+    <TextView
+        android:id="@+id/textView100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:text="@string/TituloI"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextTituloI"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextTituloI" />
+
+    <ImageView
+        android:id="@+id/imageViewFotoI"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/editTextTituloI"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="40dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView101"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewFotoI" />
+
+    <EditText
+        android:id="@+id/editTextDescripcionI"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/textViewFechaI"
+        app:layout_constraintStart_toStartOf="@+id/textViewFechaI"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFechaI" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:onClick="onClickUbicacion"
+        android:text="@string/MostrarEditarUbicacion"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcionI" />
+
+    <Button
+        android:id="@+id/button5"
+        style="@style/CustomStyleParaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="onClickEditar"
+        android:text="@string/Editar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button8"
+        style="@style/CustomStyleParaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:onClick="onClickEliminar"
+        android:text="@string/Eliminar"
+        app:layout_constraintBottom_toBottomOf="@+id/button5"
+        app:layout_constraintEnd_toStartOf="@+id/button5"
+        app:layout_constraintTop_toTopOf="@+id/button5" />
+
+    <TextView
+        android:id="@+id/textViewFechaI"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextTituloI"
+        app:layout_constraintStart_toStartOf="@+id/editTextTituloI"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTituloI" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

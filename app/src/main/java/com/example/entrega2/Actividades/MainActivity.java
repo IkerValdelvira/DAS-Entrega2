@@ -5,6 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +22,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.entrega2.Adaptadores.AdaptadorListViewAmigos;
+import com.example.entrega2.Adaptadores.AdaptadorRecycler;
 import com.example.entrega2.Preferencias;
 import com.example.entrega2.R;
+import com.example.entrega2.Workers.GetAmigosUsuarioWorker;
+import com.example.entrega2.Workers.GetFotosUsuarioWorker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias {
@@ -28,6 +49,12 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
     // View para la gestión de las preferencias
     private View preferencias;
     private int prefsVisibles;
+
+    // Para el RecyclerView
+    private RecyclerView recyclerView;
+    private AdaptadorRecycler adaptador;            // Adaptador del RecyclerView
+    private LinearLayoutManager linearLayout;       // Layout para el RecyclerView
+    private GridLayoutManager gridLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +138,57 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
             preferencias.setVisibility(View.VISIBLE);
             prefsVisibles = 1;
         }
+
+        // Inicializacion RecyclerView
+        recyclerView = findViewById(R.id.recyclerView);
+        //linearLayout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);       // Los elementos se muestran de forma lineal vertical
+        //recyclerView.setLayoutManager(linearLayout);
+        gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(gridLayout);
+
+        // Obtener las fotos
+        Data datos = new Data.Builder()
+                .putString("username", usuario)
+                .build();
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetFotosUsuarioWorker.class)
+                .setConstraints(restricciones)
+                .setInputData(datos)
+                .build();
+
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(this, status -> {
+                    if (status != null && status.getState().isFinished()) {
+                        String result = status.getOutputData().getString("datos");
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+
+                            if(jsonArray.length() == 0) {
+                                Toast.makeText(this, getString(R.string.NoFotosSubidas), Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                String[] ids = new String[jsonArray.length()];
+                                String[] titulos = new String[jsonArray.length()];
+                                String[] descripciones = new String[jsonArray.length()];
+
+                                for(int i=0; i<jsonArray.length(); i++) {
+                                    JSONObject foto = jsonArray.getJSONObject(i);
+                                    ids[i] = foto.getString("id");
+                                    titulos[i] = foto.getString("titulo");
+                                    descripciones[i] = foto.getString("descripcion");
+                                }
+                                adaptador = new AdaptadorRecycler(this,usuario,ids,titulos);
+                                recyclerView.setAdapter(adaptador);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(this).enqueue(otwr);
 
     }
 

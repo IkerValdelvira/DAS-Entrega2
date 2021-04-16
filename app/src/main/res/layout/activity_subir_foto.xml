@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editTextTituloSubir"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
@@ -39,7 +39,7 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/textView9"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextMultiLine"
+        app:layout_constraintStart_toStartOf="@+id/editTextDescripcionSubir"
         app:layout_constraintTop_toTopOf="@+id/textView9" />
 
     <TextView
@@ -60,14 +60,14 @@
         android:layout_marginStart="20dp"
         android:text="@string/InsertarDescripcion"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextTextMultiLine"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextDescripcionSubir"
         app:layout_constraintEnd_toEndOf="@+id/textView9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextTextMultiLine"
+        app:layout_constraintTop_toTopOf="@+id/editTextDescripcionSubir"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editTextTextMultiLine"
+        android:id="@+id/editTextDescripcionSubir"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginStart="10dp"
@@ -79,7 +79,7 @@
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView10"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTituloSubir" />
 
     <Button
         android:id="@+id/button"
@@ -117,4 +117,14 @@
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/button2"
         app:layout_constraintEnd_toStartOf="@+id/button2" />
+
+    <RadioButton
+        android:id="@+id/radioButtonGeolocalizacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/InsertarGeolocalizacion"
+        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcionSubir" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
