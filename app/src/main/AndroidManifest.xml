@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -29,6 +30,11 @@
         <activity android:name=".Actividades.UbicacionActivity" />
         <activity android:name=".Actividades.InfoFotoActivity" />
         <activity android:name=".Actividades.SubirFotoActivity" />
+
+        <!-- Bradcast Receiver para la alarma de las notificaciones -->
+        <receiver android:name=".AlarmReceiver" />
+
+        <service android:name=".ServicioMusicaNotificacion"/>
 
         <receiver
             android:name=".Widgets.Widget"

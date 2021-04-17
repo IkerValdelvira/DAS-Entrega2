@@ -130,5 +130,8 @@
     <string name="CrearEtiqueta">Crear nueva etiqueta</string>
     <string name="IntroduceEtiqueta">Introduce una nueva etiqueta:</string>
     <string name="EscribirEtiqueta">Escribir etiqueta...</string>
+    <string name="MantenteActivo">continúa añadiendo fotos, compartiéndolas con tus amigos y mucho más.</string>
+    <string name="BuscarAmigosNot">Buscar amigos</string>
+    <string name="MarcadoresNot">Añade marcadores</string>
 
 </resources>

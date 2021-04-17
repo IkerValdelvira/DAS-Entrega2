@@ -15,6 +15,7 @@ import androidx.work.WorkManager;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -34,6 +35,7 @@ import com.example.entrega2.Dialogos.DialogoCrearMarcador;
 import com.example.entrega2.Dialogos.DialogoEliminarMarcador;
 import com.example.entrega2.Dialogos.DialogoPermisosLocalizacion;
 import com.example.entrega2.R;
+import com.example.entrega2.ServicioMusicaNotificacion;
 import com.example.entrega2.Workers.BuscarUsuariosWorker;
 import com.example.entrega2.Workers.EliminarMarcadorWorker;
 import com.example.entrega2.Workers.GetAmigosUsuarioWorker;
@@ -112,6 +114,11 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             usuario = extras.getString("usuario");
+            String desdeServicio = extras.getString("servicio");
+            if(desdeServicio != null && desdeServicio.equals("true")) {
+                Intent i = new Intent(this, ServicioMusicaNotificacion.class);
+                stopService(i);
+            }
         }
 
         // COMPROBAR ESTADO DE GOOGLE PLAY

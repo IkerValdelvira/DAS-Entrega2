@@ -13,6 +13,8 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,8 +26,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.entrega2.Adaptadores.AdaptadorRecyclerMisFotos;
+import com.example.entrega2.AlarmReceiver;
 import com.example.entrega2.Preferencias;
 import com.example.entrega2.R;
+import com.example.entrega2.ServicioMusicaNotificacion;
 import com.example.entrega2.Workers.GetFotosUsuarioWorker;
 import com.google.android.material.navigation.NavigationView;
 
@@ -33,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias {
@@ -72,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             usuario = extras.getString("usuario");
+            String desdeServicio = extras.getString("servicio");
+            if(desdeServicio != null && desdeServicio.equals("true")) {
+                Intent i = new Intent(this, ServicioMusicaNotificacion.class);
+                stopService(i);
+            }
         }
 
         setSupportActionBar(findViewById(R.id.toolbar));

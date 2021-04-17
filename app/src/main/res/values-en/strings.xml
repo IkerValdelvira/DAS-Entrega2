@@ -131,5 +131,8 @@
     <string name="CrearEtiqueta">Create new tag</string>
     <string name="IntroduceEtiqueta">Insert new tag:</string>
     <string name="EscribirEtiqueta">Write tag...</string>
+    <string name="MantenteActivo">keep adding photos, sharing them with your friends and much more.</string>
+    <string name="BuscarAmigosNot">Search friends</string>
+    <string name="MarcadoresNot">Add markers</string>
 
 </resources>

@@ -131,5 +131,8 @@
     <string name="CrearEtiqueta">Etiketa berria sortu</string>
     <string name="IntroduceEtiqueta">Etiketa berria sartu:</string>
     <string name="EscribirEtiqueta">Etiketa idatzi...</string>
+    <string name="MantenteActivo">jarraitu argazkiak gehitzen, lagunekin partekatzen eta askoz gehiago.</string>
+    <string name="BuscarAmigosNot">Lagunak bilatu</string>
+    <string name="MarcadoresNot">Markadoreak gehitu</string>
 
 </resources>

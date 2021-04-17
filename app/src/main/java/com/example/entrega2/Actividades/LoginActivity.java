@@ -1,11 +1,15 @@
 package com.example.entrega2.Actividades;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,6 +28,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
+import com.example.entrega2.AlarmReceiver;
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
 import com.example.entrega2.Workers.GetTokensUsuarioWorker;
@@ -40,6 +45,7 @@ import org.json.JSONException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 // Actividad con la que se inicia la aplicación y representa el login de un usuario ya registrado
@@ -117,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                     comprobarTokens();
+                                    lanzarNotificacion(usuario);
                                 }
                                 else {
                                     Toast.makeText(this, getString(R.string.UserPassIncorrectos), Toast.LENGTH_SHORT).show();
@@ -208,5 +215,22 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
         WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    private void lanzarNotificacion(String usuario) {
+        // Alarma para notificacion
+        // Se programa una nueva alarma (AlarmManager) con la información de la película y la fecha recibida
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.setAction("alarma");
+        intent.putExtra("usuario", usuario);
+
+        // PendingIntent que lanza un broadcast
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Se le indica al AlarmManager cuándo quiere lanzar el PendingIntent
+        //  - RTC_WAKEUP: lanza la alarma a la hora especificada despertando el dispositivo
+        //  - setExactAndAllowWhileIdle: la alarma funciona en modo descanso (Doze) y con exactitud
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 10000, pendingIntent);
     }
 }

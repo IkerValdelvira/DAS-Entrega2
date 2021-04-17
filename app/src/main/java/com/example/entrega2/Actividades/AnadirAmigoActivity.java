@@ -28,6 +28,7 @@ import com.example.entrega2.Adaptadores.AdaptadorListViewAnadir;
 import com.example.entrega2.Adaptadores.AdaptadorListViewSolicitud;
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
+import com.example.entrega2.ServicioMusicaNotificacion;
 import com.example.entrega2.Workers.BuscarSolicitudesWorker;
 import com.example.entrega2.Workers.BuscarUsuariosPorDefectoWorker;
 import com.example.entrega2.Workers.BuscarUsuariosWorker;
@@ -83,6 +84,11 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
             usuario = extras.getString("usuario");
             if(extras.getString("toUser") != null){
                 usuario = extras.getString("toUser");
+            }
+            String desdeServicio = extras.getString("servicio");
+            if(desdeServicio != null && desdeServicio.equals("true")) {
+                Intent i = new Intent(this, ServicioMusicaNotificacion.class);
+                stopService(i);
             }
         }
 
