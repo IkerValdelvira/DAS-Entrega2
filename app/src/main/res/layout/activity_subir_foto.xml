@@ -124,7 +124,42 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/InsertarGeolocalizacion"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/listViewEtiquetas" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/Etiquetas"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView10"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="@+id/listViewEtiquetas" />
+
+    <ListView
+        android:id="@+id/listViewEtiquetas"
+        android:layout_width="257dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/editTextDescripcionSubir"
         app:layout_constraintTop_toBottomOf="@+id/editTextDescripcionSubir" />
+
+    <Button
+        android:id="@+id/button11"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClickAñadirEtiqueta"
+        android:text="@string/Añadir"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView13"
+        app:layout_constraintStart_toStartOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

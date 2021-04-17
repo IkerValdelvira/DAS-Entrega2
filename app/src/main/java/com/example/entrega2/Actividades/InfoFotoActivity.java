@@ -16,13 +16,17 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.entrega2.Dialogos.DialogoCompartirFoto;
+import com.example.entrega2.Dialogos.DialogoCrearEtiqueta;
 import com.example.entrega2.R;
 import com.example.entrega2.Workers.ActualizarFotoWorker;
 import com.example.entrega2.Workers.EliminarFotoWorker;
@@ -39,7 +43,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class InfoFotoActivity extends AppCompatActivity implements DialogoCompartirFoto.ListenerdelDialogo{
+public class InfoFotoActivity extends AppCompatActivity implements DialogoCompartirFoto.ListenerdelDialogo, DialogoCrearEtiqueta.ListenerdelDialogo{
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
@@ -49,11 +53,13 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
     private String fecha;
     private String latitud;
     private String longitud;
+    private ArrayList<String> etiquetas;
 
     private ImageView imageViewFoto;
     private EditText editTextTitulo;
     private EditText editTextDescripcion;
     private TextView textViewFecha;
+    private ListView listViewEtiquetas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,17 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         editTextTitulo = findViewById(R.id.editTextTituloI);
         textViewFecha = findViewById(R.id.textViewFechaI);
         editTextDescripcion = findViewById(R.id.editTextDescripcionI);
+        listViewEtiquetas = findViewById(R.id.listViewEtiquetasI);
+
+        listViewEtiquetas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+                etiquetas.remove(position);
+                ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(InfoFotoActivity.this, android.R.layout.simple_list_item_1, etiquetas);
+                listViewEtiquetas.setAdapter(adaptadorEtiquetas);
+                return false;
+            }
+        });
 
         // Extraer información de la foto de la base de datos
         Data datos = new Data.Builder()
@@ -112,10 +129,21 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                             fecha = foto.getString("fecha");
                             latitud = foto.getString("latitud");
                             longitud = foto.getString("longitud");
+                            String etiquetasString = foto.getString("etiquetas");
+
 
                             editTextTitulo.setText(titulo);
                             editTextDescripcion.setText(descripcion);
                             textViewFecha.setText(fecha);
+                            etiquetas = new ArrayList<>();
+                            if(etiquetasString.length()>0) {
+                                String[] etiquetasAux = etiquetasString.split(";");
+                                for(int i=0; i<etiquetasAux.length; i++) {
+                                    etiquetas.add(etiquetasAux[i]);
+                                }
+                                ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(InfoFotoActivity.this, android.R.layout.simple_list_item_1, etiquetas);
+                                listViewEtiquetas.setAdapter(adaptadorEtiquetas);
+                            }
 
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             StorageReference storageRef = storage.getReference();
@@ -134,6 +162,18 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                 });
 
         WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    public void onClickAñadirEtiqueta(View v) {
+        DialogFragment dialogoCrearEtiqueta = new DialogoCrearEtiqueta();
+        dialogoCrearEtiqueta.show(getSupportFragmentManager(), "crear_etiqueta");
+    }
+
+    @Override
+    public void crearEtiqueta(String etiqueta) {
+        etiquetas.add(etiqueta);
+        ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(InfoFotoActivity.this, android.R.layout.simple_list_item_1, etiquetas);
+        listViewEtiquetas.setAdapter(adaptadorEtiquetas);
     }
 
     public void onClickUbicacion(View v) {
@@ -157,6 +197,10 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
     public void onClickEditar(View v) {
         titulo = editTextTitulo.getText().toString();
         descripcion = editTextDescripcion.getText().toString();
+        String etiquetasString = "";
+        for(int i=0; i<etiquetas.size(); i++) {
+            etiquetasString += etiquetas.get(i) + ";";
+        }
 
         if(titulo.isEmpty()) {
             Toast.makeText(this, getString(R.string.EscribeTitulo), Toast.LENGTH_SHORT).show();
@@ -169,6 +213,7 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                     .putString("descripcion", descripcion)
                     .putString("latitud", latitud)
                     .putString("longitud", longitud)
+                    .putString("etiquetas", etiquetasString)
                     .build();
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)

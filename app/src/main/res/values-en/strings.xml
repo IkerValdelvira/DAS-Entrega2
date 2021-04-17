@@ -127,5 +127,9 @@
     <string name="FotoCompartidaNot">A picture has been shared with you</string>
     <string name="HaCompartido">has shared with you the picture</string>
     <string name="TocaRevisarCompartidas">, tap to review shared pictures.</string>
+    <string name="Etiquetas">Tags:</string>
+    <string name="CrearEtiqueta">Create new tag</string>
+    <string name="IntroduceEtiqueta">Insert new tag:</string>
+    <string name="EscribirEtiqueta">Write tag...</string>
 
 </resources>

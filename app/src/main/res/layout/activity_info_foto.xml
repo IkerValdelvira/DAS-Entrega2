@@ -30,6 +30,16 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/Etiquetas"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView102"
+        app:layout_constraintTop_toTopOf="@+id/listViewEtiquetasI" />
+
+    <TextView
         android:id="@+id/textView101"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,13 +101,25 @@
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:layout_marginTop="10dp"
         android:onClick="onClickUbicacion"
         android:text="@string/MostrarEditarUbicacion"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcionI" />
+        app:layout_constraintStart_toStartOf="@+id/button12"
+        app:layout_constraintTop_toBottomOf="@+id/listViewEtiquetasI" />
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClickAñadirEtiqueta"
+        android:text="@string/Añadir"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView15"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView15"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
     <Button
         android:id="@+id/button5"
@@ -144,5 +166,14 @@
         app:layout_constraintStart_toEndOf="@+id/imageViewFotoI"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
         app:layout_constraintVertical_bias="0.0" />
+
+    <ListView
+        android:id="@+id/listViewEtiquetasI"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextDescripcionI"
+        app:layout_constraintStart_toStartOf="@+id/editTextDescripcionI"
+        app:layout_constraintTop_toBottomOf="@+id/editTextDescripcionI" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

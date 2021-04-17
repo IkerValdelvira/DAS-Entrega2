@@ -126,5 +126,9 @@
     <string name="FotoCompartidaNot">Te han compartido una foto</string>
     <string name="HaCompartido">te ha compartido la foto</string>
     <string name="TocaRevisarCompartidas">, toca para revisar las fotos compartidas.</string>
+    <string name="Etiquetas">Etiquetas:</string>
+    <string name="CrearEtiqueta">Crear nueva etiqueta</string>
+    <string name="IntroduceEtiqueta">Introduce una nueva etiqueta:</string>
+    <string name="EscribirEtiqueta">Escribir etiqueta...</string>
 
 </resources>

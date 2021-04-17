@@ -20,7 +20,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textViewUsuario"
+                android:id="@+id/textViewUsuarioW"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -28,7 +28,7 @@
                 android:textAlignment="center" />
 
             <ImageView
-                android:id="@+id/imageView5"
+                android:id="@+id/imageViewFotoW"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

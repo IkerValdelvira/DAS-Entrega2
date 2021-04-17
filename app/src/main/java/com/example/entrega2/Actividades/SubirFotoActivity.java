@@ -26,11 +26,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.example.entrega2.Dialogos.DialogoCrearEtiqueta;
 import com.example.entrega2.Dialogos.DialogoPermisosCamara;
 import com.example.entrega2.Dialogos.DialogoPermisosLocalizacion;
 import com.example.entrega2.R;
@@ -40,24 +44,27 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.label.ImageLabel;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class SubirFotoActivity extends AppCompatActivity {
+public class SubirFotoActivity extends AppCompatActivity implements DialogoCrearEtiqueta.ListenerdelDialogo{
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
@@ -70,10 +77,13 @@ public class SubirFotoActivity extends AppCompatActivity {
     private Uri uriimagen;
     private String imageName;
     private File fichImg;
+    private ArrayList<String> etiquetasMostrar;
+    private ArrayList<String> etiquetasGuardar;
 
     private EditText editTextTituloSubir;
     private EditText editTextDescripcionSubir;
     private RadioButton radioButtonGeolocalizacion;
+    private ListView listViewEtiquetas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,11 +113,23 @@ public class SubirFotoActivity extends AppCompatActivity {
         }
 
         imageViewFoto = findViewById(R.id.imageViewFoto);
-        imageViewFoto.setRotation(90);
+        //imageViewFoto.setRotation(90);
 
         editTextTituloSubir = findViewById(R.id.editTextTituloSubir);
         editTextDescripcionSubir = findViewById(R.id.editTextDescripcionSubir);
         radioButtonGeolocalizacion = findViewById(R.id.radioButtonGeolocalizacion);
+        listViewEtiquetas = findViewById(R.id.listViewEtiquetas);
+
+        listViewEtiquetas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+                etiquetasMostrar.remove(position);
+                etiquetasGuardar.remove(position);
+                ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(SubirFotoActivity.this, android.R.layout.simple_list_item_1, etiquetasMostrar);
+                listViewEtiquetas.setAdapter(adaptadorEtiquetas);
+                return false;
+            }
+        });
 
         if(origenFoto.equals("galeria")) {
             Intent elIntentGal = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -160,17 +182,18 @@ public class SubirFotoActivity extends AppCompatActivity {
         if (requestCode == CODIGO_GALERIA && resultCode == RESULT_OK) {
             uriimagen = data.getData();
             imageName = uriimagen.toString().split("%2F")[uriimagen.toString().split("%2F").length-1];
-            setImage(uriimagen);
         }
 
         else if (requestCode == CODIGO_FOTO_ARCHIVO && resultCode == RESULT_OK) {
             imageName = uriimagen.toString().split("/")[uriimagen.toString().split("/").length-1];
-            setImage(uriimagen);
         }
+
+        setImage();
+        etiquetadoAutomatico();
 
     }
 
-    private void setImage(Uri uriimagen) {
+    private void setImage() {
         try{
             Bitmap bitmapFoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uriimagen);
             int anchoDestino = imageViewFoto.getWidth();
@@ -193,6 +216,61 @@ public class SubirFotoActivity extends AppCompatActivity {
         }
     }
 
+    private void etiquetadoAutomatico() {
+        // Etiquetado ML
+        try {
+            // Crear InputImage desde la URI de la imagen
+            InputImage image = InputImage.fromFilePath(this, uriimagen);
+
+            // Obtener instancia de ImageLabeler (con opciones por defecto)
+            ImageLabeler labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS);
+
+            // Procesar etiquetado de la imagen
+            labeler.process(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<ImageLabel>>() {
+                        @Override
+                        public void onSuccess(List<ImageLabel> labels) {
+                            // Obetener etiquetas
+                            etiquetasMostrar = new ArrayList<>();
+                            etiquetasGuardar = new ArrayList<>();
+                            for(int i=0; i<labels.size(); i++) {
+                                String tag = labels.get(i).getText();
+                                float confidence = labels.get(i).getConfidence();
+                                String confidenceAux = String.format("%.3f", confidence);
+                                etiquetasMostrar.add(tag + " (" + confidenceAux + ")");
+                                etiquetasGuardar.add(tag);
+                            }
+
+                            ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(SubirFotoActivity.this, android.R.layout.simple_list_item_1, etiquetasMostrar);
+                            listViewEtiquetas.setAdapter(adaptadorEtiquetas);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Task failed with an exception
+                            // ...
+                        }
+                    });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onClickAñadirEtiqueta(View v) {
+        DialogFragment dialogoCrearEtiqueta = new DialogoCrearEtiqueta();
+        dialogoCrearEtiqueta.show(getSupportFragmentManager(), "crear_etiqueta");
+    }
+
+    @Override
+    public void crearEtiqueta(String etiqueta) {
+        etiquetasMostrar.add(etiqueta);
+        etiquetasGuardar.add(etiqueta);
+        ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(SubirFotoActivity.this, android.R.layout.simple_list_item_1, etiquetasMostrar);
+        listViewEtiquetas.setAdapter(adaptadorEtiquetas);
+    }
+
     public void onClickSubir(View v) {
         String titulo = editTextTituloSubir.getText().toString();
         String descripcion = editTextDescripcionSubir.getText().toString();
@@ -211,19 +289,25 @@ public class SubirFotoActivity extends AppCompatActivity {
                 fecha = dtf.format(now);
             }
 
+            // Etiquetas
+            String etiquetasString = "";
+            for(int i=0; i<etiquetasGuardar.size(); i++) {
+                etiquetasString += etiquetasGuardar.get(i) + ";";
+            }
+
             // Opcion geolocalizacion
             String latitud = "";
             String longitud = "";
             if(radioButtonGeolocalizacion.isChecked()) {
-                getUbicacionActual(titulo, descripcion, fecha);
+                getUbicacionActual(titulo, descripcion, fecha, etiquetasString);
             }
             else {
-                subirFoto(titulo, descripcion, fecha, latitud, longitud);
+                subirFoto(titulo, descripcion, fecha, latitud, longitud, etiquetasString);
             }
         }
     }
 
-    private void getUbicacionActual(String titulo, String descripcion, String fecha) {
+    private void getUbicacionActual(String titulo, String descripcion, String fecha, String etiquetasString) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //EL PERMISO NO ESTÁ CONCEDIDO, PEDIRLO
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -237,7 +321,7 @@ public class SubirFotoActivity extends AppCompatActivity {
             }
             //PEDIR EL PERMISO
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            getUbicacionActual(titulo, descripcion, fecha);
+            getUbicacionActual(titulo, descripcion, fecha, etiquetasString);
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
             FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
@@ -249,11 +333,11 @@ public class SubirFotoActivity extends AppCompatActivity {
                                 double latitud = location.getLatitude();
                                 double longitud = location.getLongitude();
 
-                                subirFoto(titulo, descripcion, fecha, String.valueOf(latitud), String.valueOf(longitud));
+                                subirFoto(titulo, descripcion, fecha, String.valueOf(latitud), String.valueOf(longitud), etiquetasString);
 
                             } else {
                                 Toast.makeText(SubirFotoActivity.this, getString(R.string.GeolocalizacionDesconocida), Toast.LENGTH_SHORT).show();
-                                volverAConectar(titulo, descripcion, fecha, location);
+                                volverAConectar(titulo, descripcion, fecha, location, etiquetasString);
                             }
                         }
                     })
@@ -271,7 +355,7 @@ public class SubirFotoActivity extends AppCompatActivity {
     private LocationCallback actualizador;
 
     @SuppressLint("MissingPermission")
-    private void volverAConectar(String titulo, String descripcion, String fecha, Location location) {
+    private void volverAConectar(String titulo, String descripcion, String fecha, Location location, String etiquetasString) {
         System.out.println("VOLVER A CONECTAR");
         LocationRequest peticion = LocationRequest.create();
         peticion.setInterval(1000);
@@ -286,7 +370,7 @@ public class SubirFotoActivity extends AppCompatActivity {
                     double latitud = location.getLatitude();
                     double longitud = location.getLongitude();
 
-                    subirFoto(titulo, descripcion, fecha, String.valueOf(latitud), String.valueOf(longitud));
+                    subirFoto(titulo, descripcion, fecha, String.valueOf(latitud), String.valueOf(longitud), etiquetasString);
 
                     detenerActualizador();
                 }
@@ -302,7 +386,7 @@ public class SubirFotoActivity extends AppCompatActivity {
         proveedordelocalizacion.removeLocationUpdates(actualizador);
     }
 
-    private void subirFoto(String titulo, String descripcion, String fecha, String latitud, String longitud) {
+    private void subirFoto(String titulo, String descripcion, String fecha, String latitud, String longitud, String etiquetasString) {
         // Subir a Firebase
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -318,6 +402,7 @@ public class SubirFotoActivity extends AppCompatActivity {
                 .putString("fecha", fecha)
                 .putString("latitud", latitud)
                 .putString("longitud", longitud)
+                .putString("etiquetas", etiquetasString)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -361,4 +446,5 @@ public class SubirFotoActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 }

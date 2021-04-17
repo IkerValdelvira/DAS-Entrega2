@@ -127,5 +127,9 @@
     <string name="FotoCompartidaNot">Argazki bat konpartitu dizute</string>
     <string name="HaCompartido">konpartitu dizu argazkia</string>
     <string name="TocaRevisarCompartidas">, jo ezazu konpartitutako argazkiak ikustera.</string>
+    <string name="Etiquetas">Etiketak:</string>
+    <string name="CrearEtiqueta">Etiketa berria sortu</string>
+    <string name="IntroduceEtiqueta">Etiketa berria sartu:</string>
+    <string name="EscribirEtiqueta">Etiketa idatzi...</string>
 
 </resources>
