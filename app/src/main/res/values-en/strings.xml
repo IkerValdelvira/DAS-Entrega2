@@ -134,5 +134,7 @@
     <string name="MantenteActivo">keep adding photos, sharing them with your friends and much more.</string>
     <string name="BuscarAmigosNot">Search friends</string>
     <string name="MarcadoresNot">Add markers</string>
+    <string name="DescargarFoto">Download picture</string>
+    <string name="SeguroDescargar">Are you sure you want to download this picture?</string>
 
 </resources>

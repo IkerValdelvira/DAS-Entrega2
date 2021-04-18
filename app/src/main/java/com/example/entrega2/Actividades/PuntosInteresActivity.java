@@ -14,6 +14,7 @@ import androidx.work.WorkManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -118,6 +119,8 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
             if(desdeServicio != null && desdeServicio.equals("true")) {
                 Intent i = new Intent(this, ServicioMusicaNotificacion.class);
                 stopService(i);
+                NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(extras.getInt("notification_id"));
             }
         }
 

@@ -14,12 +14,15 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.app.AlarmManager;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.entrega2.Adaptadores.AdaptadorRecyclerMisFotos;
 import com.example.entrega2.AlarmReceiver;
+import com.example.entrega2.Dialogos.DialogoDescargarFoto;
 import com.example.entrega2.Preferencias;
 import com.example.entrega2.R;
 import com.example.entrega2.ServicioMusicaNotificacion;
@@ -37,10 +41,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias {
+public class MainActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias, DialogoDescargarFoto.ListenerdelDialogo {
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
@@ -262,5 +267,19 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
         super.onSaveInstanceState(outState);
         // Se guarda en un Bundle la variable que indica si el fragment de las preferencias estaba visible o invisible
         outState.putInt("prefsVisibles", prefsVisibles);
+    }
+
+    @Override
+    public void descargarFoto(Uri uri) {
+        File path = new File(uri.toString());
+        String fileName = path.getName();
+        final DownloadManager downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setTitle(fileName);
+        request.setDescription(fileName);
+        request.setVisibleInDownloadsUi(true);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, fileName);
+        long ref = downloadManager.enqueue(request);
     }
 }

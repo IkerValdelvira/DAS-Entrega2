@@ -134,5 +134,7 @@
     <string name="MantenteActivo">continúa añadiendo fotos, compartiéndolas con tus amigos y mucho más.</string>
     <string name="BuscarAmigosNot">Buscar amigos</string>
     <string name="MarcadoresNot">Añade marcadores</string>
+    <string name="DescargarFoto">Descargar foto</string>
+    <string name="SeguroDescargar">¿Estas seguro de que deseas descargar esta foto?</string>
 
 </resources>

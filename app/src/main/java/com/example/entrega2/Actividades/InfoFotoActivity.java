@@ -9,12 +9,14 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -152,6 +155,18 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     Glide.with(InfoFotoActivity.this).load(uri).into(imageViewFoto);
+
+                                    // Descargar imagen
+                                    File path = new File(uri.toString());
+                                    String fileName = path.getName();
+                                    final DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                                    request.setTitle(fileName);
+                                    request.setDescription(fileName);
+                                    request.setVisibleInDownloadsUi(true);
+                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, fileName);
+                                    long ref = downloadManager.enqueue(request);
                                 }
                             });
 

@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -62,13 +63,18 @@ public class ServicioMusicaNotificacion extends Service {
         Intent i2 = new Intent(this, PuntosInteresActivity.class);     // Crea una nueva actividad 'VerMasTardeActivity' y borrará la película de la lista 'ver mas tarde'
         i2.putExtra("usuario", usuario);               // Abre un navegador buscando la película por su título
         i2.putExtra("servicio", "true");
+        i2.putExtra("notification_id", 2);
         PendingIntent pendingIntentMarcadores = PendingIntent.getActivity(this, 0, i2, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // PendingIntent "Quitar de VMT" --> Acción de la notificación
         Intent i3 = new Intent(this, AnadirAmigoActivity.class);     // Crea una nueva actividad 'VerMasTardeActivity' y borrará la película de la lista 'ver mas tarde'
         i3.putExtra("usuario", usuario);
         i3.putExtra("servicio", "true");
+        i3.putExtra("notification_id", 2);
         PendingIntent pendingIntentAmigos = PendingIntent.getActivity(this, 0, i3, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent i4 = new Intent(this, NotificationDismissedReceiver.class);
+        PendingIntent pendingIntentDismiss = PendingIntent.getBroadcast(this.getApplicationContext(), 0, i4, 0);
 
         // Se definen las características de la notificación
         builder.setSmallIcon(android.R.drawable.stat_sys_warning)
@@ -78,12 +84,15 @@ public class ServicioMusicaNotificacion extends Service {
                 .setAutoCancel(true)        // La notificación desaparece al pulsar en ella
                 .addAction(android.R.drawable.ic_search_category_default,getString(R.string.BuscarAmigosNot), pendingIntentAmigos)      // Añade la acción 'Buscar información'
                 .addAction(android.R.drawable.ic_dialog_map,getString(R.string.MarcadoresNot), pendingIntentMarcadores)                    // Añade la acción 'Quitar de ver más tarde'
-                .setContentIntent(pendingIntent);       // Añade la acción que abre la actividad con la película concreta (al pulsar en el cuerpo de la notificación)
+                .setContentIntent(pendingIntent)       // Añade la acción que abre la actividad con la película concreta (al pulsar en el cuerpo de la notificación)
+                .setDeleteIntent(pendingIntentDismiss);
+
 
         // Lanza la notificación
         Notification notification = builder.build();
         startForeground(1, notification);
-        manager.notify(1, notification);
+        stopForeground(true);
+        manager.notify(2, notification);
 
 
         // Reproducir fichero

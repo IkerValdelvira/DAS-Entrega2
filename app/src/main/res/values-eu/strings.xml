@@ -134,5 +134,7 @@
     <string name="MantenteActivo">jarraitu argazkiak gehitzen, lagunekin partekatzen eta askoz gehiago.</string>
     <string name="BuscarAmigosNot">Lagunak bilatu</string>
     <string name="MarcadoresNot">Markadoreak gehitu</string>
+    <string name="DescargarFoto">Argazkia deskargatu</string>
+    <string name="SeguroDescargar">Ziur zaude argazki hau deskargatu nahi duzula?</string>
 
 </resources>

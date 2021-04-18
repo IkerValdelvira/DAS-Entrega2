@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.entrega2">
 
     <uses-feature
@@ -33,6 +34,7 @@
 
         <!-- Bradcast Receiver para la alarma de las notificaciones -->
         <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".NotificationDismissedReceiver"/>
 
         <service android:name=".ServicioMusicaNotificacion"/>
 

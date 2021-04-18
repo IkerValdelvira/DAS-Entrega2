@@ -9,10 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.entrega2.Actividades.InfoFotoActivity;
+import com.example.entrega2.Actividades.MainActivity;
+import com.example.entrega2.Dialogos.DialogoCrearEtiqueta;
+import com.example.entrega2.Dialogos.DialogoDescargarFoto;
 import com.example.entrega2.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -28,10 +32,10 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
 
     private String usuario;                     // Nombre de usuario actual
 
-    private Context contexto;
+    private MainActivity contexto;
 
     // Constructor del adaptador
-    public AdaptadorRecyclerMisFotos(Context pContexto, String pUsuario, String[] pIds, String[] pTitulos) {
+    public AdaptadorRecyclerMisFotos(MainActivity pContexto, String pUsuario, String[] pIds, String[] pTitulos) {
         contexto = pContexto;
         usuario = pUsuario;
         ids = pIds;
@@ -75,6 +79,17 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
                 intent.putExtra("usuario", usuario);
                 intent.putExtra("foto", holder.id);
                 contexto.startActivity(intent);
+            }
+        });
+
+        // Listener 'onClick' para cada View
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una película)
+            @Override
+            public boolean onLongClick(View view) {
+                DialogFragment dialogoDescargarFoto = new DialogoDescargarFoto(holder.id);
+                dialogoDescargarFoto.show(contexto.getSupportFragmentManager(), "descargar_foto");
+                return false;
             }
         });
     }
