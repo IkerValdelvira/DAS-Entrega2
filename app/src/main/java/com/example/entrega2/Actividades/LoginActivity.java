@@ -232,6 +232,6 @@ public class LoginActivity extends AppCompatActivity {
         // Se le indica al AlarmManager cuándo quiere lanzar el PendingIntent
         //  - RTC_WAKEUP: lanza la alarma a la hora especificada despertando el dispositivo
         //  - setExactAndAllowWhileIdle: la alarma funciona en modo descanso (Doze) y con exactitud
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 10000, pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 30*60000, pendingIntent);
     }
 }

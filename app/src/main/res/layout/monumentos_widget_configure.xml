@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Widgets.WidgetConfigureActivity">
+    tools:context=".Widgets.MonumentosWidgetConfigureActivity">
 
     <TextView
         android:id="@+id/textView4"
@@ -80,7 +80,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="50dp"
-        android:text="Introduce las credenciales del usuario con el que crear el widget:"
+        android:text="@string/MensajeWidget"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

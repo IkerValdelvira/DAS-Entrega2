@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.entrega2.Dialogos.DialogoCompartirFoto;
 import com.example.entrega2.Dialogos.DialogoCrearEtiqueta;
+import com.example.entrega2.Dialogos.DialogoFotoAmpliada;
 import com.example.entrega2.R;
 import com.example.entrega2.Workers.ActualizarFotoWorker;
 import com.example.entrega2.Workers.EliminarFotoWorker;
@@ -155,18 +156,6 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     Glide.with(InfoFotoActivity.this).load(uri).into(imageViewFoto);
-
-                                    // Descargar imagen
-                                    File path = new File(uri.toString());
-                                    String fileName = path.getName();
-                                    final DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                                    DownloadManager.Request request = new DownloadManager.Request(uri);
-                                    request.setTitle(fileName);
-                                    request.setDescription(fileName);
-                                    request.setVisibleInDownloadsUi(true);
-                                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, fileName);
-                                    long ref = downloadManager.enqueue(request);
                                 }
                             });
 
@@ -177,6 +166,11 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                 });
 
         WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    public void onClickAmpliar(View v) {
+        DialogFragment dialogoFotoAmpliada = new DialogoFotoAmpliada(fotoID);
+        dialogoFotoAmpliada.show(getSupportFragmentManager(), "ampliar_foto");
     }
 
     public void onClickAñadirEtiqueta(View v) {

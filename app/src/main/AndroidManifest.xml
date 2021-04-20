@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -22,44 +22,47 @@
         android:supportsRtl="true"
         android:theme="@style/CustomTheme"
         android:usesCleartextTraffic="true">
+        <receiver android:name=".Widgets.MonumentosWidget" android:label="Widget DAS">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.example.entrega2.ACTUALIZAR_WIDGET" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/monumentos_widget_info" />
+        </receiver>
+
+        <activity android:name=".Widgets.MonumentosWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".Actividades.CompartidasActivity">
             <intent-filter>
                 <action android:name="COMPARTIDAS" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".Actividades.UbicacionActivity" />
         <activity android:name=".Actividades.InfoFotoActivity" />
-        <activity android:name=".Actividades.SubirFotoActivity" />
-
-        <!-- Bradcast Receiver para la alarma de las notificaciones -->
+        <activity android:name=".Actividades.SubirFotoActivity" /> <!-- Bradcast Receiver para la alarma de las notificaciones -->
         <receiver android:name=".AlarmReceiver" />
-        <receiver android:name=".NotificationDismissedReceiver"/>
+        <receiver android:name=".NotificationDismissedReceiver" />
 
-        <service android:name=".ServicioMusicaNotificacion"/>
+        <service android:name=".ServicioMusicaNotificacion" />
 
-        <receiver
-            android:name=".Widgets.Widget"
-            android:label="Widget DAS">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
-        </receiver>
-
-        <activity android:name=".Widgets.WidgetConfigureActivity">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
         <activity android:name=".Actividades.PuntosInteresActivity" />
         <activity android:name=".Actividades.AmigosActivity" />
         <activity android:name=".Actividades.AnadirAmigoActivity">
             <intent-filter>
                 <action android:name="SOLICITUD" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -70,6 +73,7 @@
         <activity android:name=".Actividades.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -92,6 +96,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCKQhVCgP94bTu2fxA6oFUcRQBkjnYR8xY" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

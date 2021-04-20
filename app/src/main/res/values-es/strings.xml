@@ -136,5 +136,6 @@
     <string name="MarcadoresNot">Añade marcadores</string>
     <string name="DescargarFoto">Descargar foto</string>
     <string name="SeguroDescargar">¿Estas seguro de que deseas descargar esta foto?</string>
+    <string name="MensajeWidget">Introduce las credenciales del usuario con el que crear el widget:</string>
 
 </resources>

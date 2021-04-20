@@ -224,7 +224,6 @@ public class UbicacionActivity extends FragmentActivity implements OnMapReadyCal
             }
             //PEDIR EL PERMISO
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            establecerUbicacionActual();
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
             FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
@@ -309,5 +308,28 @@ public class UbicacionActivity extends FragmentActivity implements OnMapReadyCal
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent);
         finish();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 0: {
+                // Si la petición se cancela, granResults estará vacío
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // PERMISO CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
+                    Intent intent = new Intent(this, PuntosInteresActivity.class);
+                    intent.putExtra("titulo", titulo);
+                    intent.putExtra("latitud", latitud);
+                    intent.putExtra("longitud", longitud);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // PERMISO DENEGADO, DESHABILITAR LA FUNCIONALIDAD O EJECUTAR ALTERNATIVA
+                    finish();
+                }
+                return;
+            }
+        }
     }
 }

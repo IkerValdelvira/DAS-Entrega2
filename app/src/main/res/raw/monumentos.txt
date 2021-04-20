@@ -1,0 +1,50 @@
+El templo Borobudur, Indonesia --> -7.607937759447461;110.20382944848595
+Torre de Belem, Portugal --> 38.6916131;-9.2159173
+Complejo de Stonehenge, Reino Unido --> 51.1788293;-1.826183
+Duomo de Milán, Italia --> 45.4641385;9.1885548
+Complejo de Machu Picchu, Perú --> -13.1644186;-72.544764
+Acrópolis de Atenas, Grecia --> 37.9716995;23.7263496
+Puente de Carlos, Chequia --> 50.0861632;14.413687
+Construcciones religiosas de Bagan, Birmania --> 21.1708105;94.8595191
+Angkor Wat, Camboya --> 13.4124417;103.8665888
+Basílica de San Pedro, Ciudad del Vaticano --> 41.9021569;12.4537121
+Esfinge y pirámides de Giza, Egipto --> 30.00808;31.21093
+Parlamento y Big Ben de Londres, Reino Unido --> 51.5006895;-0.1245838
+Cristo Redentor, Brasil --> -30.0147017;-51.1563013
+Torre Eiffel, Francia --> 48.8582602;2.2944991
+Catedral de Colonia, Alemania --> 50.9413035;6.958138
+Templo del Cielo, China --> 39.8798683;116.4029497
+Catedral de San Basilio de Moscú, Rusia --> 55.7524736;37.6231624
+Coliseo de Roma, Italia --> 41.8902614;12.4930871
+Puerta de Brandenburgo, Alemania --> 52.5010261;13.6226617
+Castillo de Himeji, Japón --> 34.834353;134.685651
+Torre de Pisa, Italia --> 43.7230159;10.3966322
+Pirámides de Teotihuacan, México --> 20.6267388;-103.4327142
+Golden Gate, Estados Unidos --> 37.8303213;-122.4797496
+Castillo de Neuschwanstein, Alemania --> 47.55718;10.74935
+Palacio Imperial de Hofburg, Austria --> 48.2063294;16.3656259
+Santa María del Fiore, Italia --> 43.7731017;11.2565747
+Jama Masjid, India --> 28.6506822;77.232961
+Chichén Itzá, México --> 20.6828519;-88.5687196
+Itsukushima Shrine, Japón --> 35.018141;135.7620463
+Puente de los suspiros de Venecia, Italia --> 45.4340597;12.3408609
+Templo budista Kōtoku-in, Japón --> 35.3164985;139.5357293
+Faro de Mahabalipuram, India --> 12.61914;80.1942
+Molinos de viento de Kinderdijk, Holanda --> 51.88583;4.63194
+Enclave arqueológico de Petra, Grecia --> 39.33333;26.18333
+London Bridge, Reino Unido --> 51.508049;-0.0876715
+La Sagrada Familia, España --> 41.4034789;2.1744103
+Moais de Isla de Pascua, Chile --> -27.12881;-109.35997
+Taj Mahal, India --> 27.1750123;78.0420968
+Empire State Building, Estados Unidos --> 40.7484284;-73.9856546
+Ruinas de la catedral de St. Andrews, Reino Unido --> 57.149056;-2.0929965
+Ruinas de Luxor, Egipto --> 25.69893;32.6421
+Gran Muralla China, China --> 40.3314137;115.9718567
+Ayuntamiento de Bruselas, Bélgica --> 50.8465161;4.3520444
+El templo de Suria, India --> 19.8876735;86.0945357
+Palacio Potala, China --> 29.657566;91.1170312
+La Ciudad Prohibida, China --> 39.9172757;116.3907694
+Palacio Real de Madrid, España --> 40.4178207;-3.7151114
+Palacio Gyeongbokgung, Corea del Sur --> 37.5797539;126.9766807
+Abadía del Monte Saint-Michel, Francia --> 48.63603;-1.51208
+Castillo Urquhart, Reino Unido --> 57.3241044;-4.4416789

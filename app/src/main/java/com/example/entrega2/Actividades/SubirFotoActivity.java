@@ -18,10 +18,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -85,6 +87,15 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
     private RadioButton radioButtonGeolocalizacion;
     private ListView listViewEtiquetas;
 
+    private String titulo;
+    private String descripcion;
+    private String fecha;
+    private String latitud;
+    private String longitud;
+    private String etiquetasString;
+
+    private static boolean primeraVez = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,8 +124,6 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         }
 
         imageViewFoto = findViewById(R.id.imageViewFoto);
-        //imageViewFoto.setRotation(90);
-
         editTextTituloSubir = findViewById(R.id.editTextTituloSubir);
         editTextDescripcionSubir = findViewById(R.id.editTextDescripcionSubir);
         radioButtonGeolocalizacion = findViewById(R.id.radioButtonGeolocalizacion);
@@ -131,7 +140,26 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
             }
         });
 
-        if(origenFoto.equals("galeria")) {
+        if (savedInstanceState != null && savedInstanceState.getString("rotacion").equals("true")) {
+            if(savedInstanceState.getString("origen").equals("camara")){
+                fichImg = new File(savedInstanceState.getString("fichImg"));
+                uriimagen = FileProvider.getUriForFile(this, "com.example.entrega2.provider", fichImg);
+                imageName = new File(uriimagen.getPath()).getName();
+                imageViewFoto.setImageURI(uriimagen);
+            }
+            else if(savedInstanceState.getString("origen").equals("galeria") && savedInstanceState.getString("uriimagen") != null){
+                uriimagen = Uri.parse(savedInstanceState.getString("uriimagen"));
+                imageName = new File(uriimagen.getPath()).getName();
+                imageViewFoto.setImageURI(uriimagen);
+            }
+            etiquetasMostrar = savedInstanceState.getStringArrayList("etiquetasMostrar");
+            etiquetasGuardar = savedInstanceState.getStringArrayList("etiquetasGuardar");
+            if(etiquetasMostrar != null) {
+            ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(SubirFotoActivity.this, android.R.layout.simple_list_item_1, etiquetasMostrar);
+            listViewEtiquetas.setAdapter(adaptadorEtiquetas);
+            }
+        }
+        else if(origenFoto.equals("galeria")) {
             Intent elIntentGal = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(elIntentGal, CODIGO_GALERIA);
         }
@@ -150,13 +178,6 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
                 }
                 //PEDIR EL PERMISO
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
-                /*
-                Intent intent = new Intent(this, SubirFotoActivity.class);
-                intent.putExtra("usuario", usuario);
-                intent.putExtra("origen", "camara");
-                startActivity(intent);
-                finish();
-                */
             }
             else{
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -181,15 +202,21 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
 
         if (requestCode == CODIGO_GALERIA && resultCode == RESULT_OK) {
             uriimagen = data.getData();
-            imageName = uriimagen.toString().split("%2F")[uriimagen.toString().split("%2F").length-1];
+            imageName = new File(uriimagen.getPath()).getName();
+            imageViewFoto.setImageURI(uriimagen);
+            etiquetadoAutomatico();
         }
 
         else if (requestCode == CODIGO_FOTO_ARCHIVO && resultCode == RESULT_OK) {
-            imageName = uriimagen.toString().split("/")[uriimagen.toString().split("/").length-1];
+            imageName = new File(uriimagen.getPath()).getName();
+            imageViewFoto.setImageURI(uriimagen);
+            etiquetadoAutomatico();
         }
 
-        setImage();
-        etiquetadoAutomatico();
+        else {
+            finish();
+            primeraVez = true;
+        }
 
     }
 
@@ -272,8 +299,8 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
     }
 
     public void onClickSubir(View v) {
-        String titulo = editTextTituloSubir.getText().toString();
-        String descripcion = editTextDescripcionSubir.getText().toString();
+        titulo = editTextTituloSubir.getText().toString();
+        descripcion = editTextDescripcionSubir.getText().toString();
         if(titulo.isEmpty()) {
             Toast.makeText(this, getString(R.string.EscribeTitulo), Toast.LENGTH_SHORT).show();
         }
@@ -282,7 +309,6 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         }
         else {
             // Fecha
-            String fecha = "";
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                 LocalDateTime now = LocalDateTime.now();
@@ -290,24 +316,26 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
             }
 
             // Etiquetas
-            String etiquetasString = "";
             for(int i=0; i<etiquetasGuardar.size(); i++) {
-                etiquetasString += etiquetasGuardar.get(i) + ";";
+                if (etiquetasString == null) {
+                    etiquetasString = etiquetasGuardar.get(i) + ";";
+                }
+                else {
+                    etiquetasString += etiquetasGuardar.get(i) + ";";
+                }
             }
 
             // Opcion geolocalizacion
-            String latitud = "";
-            String longitud = "";
             if(radioButtonGeolocalizacion.isChecked()) {
-                getUbicacionActual(titulo, descripcion, fecha, etiquetasString);
+                getUbicacionActual();
             }
             else {
-                subirFoto(titulo, descripcion, fecha, latitud, longitud, etiquetasString);
+                subirFoto();
             }
         }
     }
 
-    private void getUbicacionActual(String titulo, String descripcion, String fecha, String etiquetasString) {
+    private void getUbicacionActual() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //EL PERMISO NO ESTÁ CONCEDIDO, PEDIRLO
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -321,7 +349,6 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
             }
             //PEDIR EL PERMISO
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            getUbicacionActual(titulo, descripcion, fecha, etiquetasString);
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
             FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
@@ -330,14 +357,14 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null) {
-                                double latitud = location.getLatitude();
-                                double longitud = location.getLongitude();
+                                latitud = String.valueOf(location.getLatitude());
+                                longitud = String.valueOf(location.getLongitude());
 
-                                subirFoto(titulo, descripcion, fecha, String.valueOf(latitud), String.valueOf(longitud), etiquetasString);
+                                subirFoto();
 
                             } else {
                                 Toast.makeText(SubirFotoActivity.this, getString(R.string.GeolocalizacionDesconocida), Toast.LENGTH_SHORT).show();
-                                volverAConectar(titulo, descripcion, fecha, location, etiquetasString);
+                                volverAConectar();
                             }
                         }
                     })
@@ -355,8 +382,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
     private LocationCallback actualizador;
 
     @SuppressLint("MissingPermission")
-    private void volverAConectar(String titulo, String descripcion, String fecha, Location location, String etiquetasString) {
-        System.out.println("VOLVER A CONECTAR");
+    private void volverAConectar() {
         LocationRequest peticion = LocationRequest.create();
         peticion.setInterval(1000);
         peticion.setFastestInterval(5000);
@@ -366,11 +392,11 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if (location != null) {
-                    double latitud = location.getLatitude();
-                    double longitud = location.getLongitude();
+                if (locationResult != null) {
+                    latitud = String.valueOf(locationResult.getLastLocation().getLatitude());
+                    longitud = String.valueOf(locationResult.getLastLocation().getLongitude());
 
-                    subirFoto(titulo, descripcion, fecha, String.valueOf(latitud), String.valueOf(longitud), etiquetasString);
+                    subirFoto();
 
                     detenerActualizador();
                 }
@@ -386,7 +412,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         proveedordelocalizacion.removeLocationUpdates(actualizador);
     }
 
-    private void subirFoto(String titulo, String descripcion, String fecha, String latitud, String longitud, String etiquetasString) {
+    private void subirFoto() {
         // Subir a Firebase
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
@@ -422,6 +448,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
                             intent.putExtra("usuario", usuario);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+                            primeraVez = true;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -432,6 +459,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
     }
 
     public void onClickOtraGaleria(View v) {
+        primeraVez = true;
         Intent intent = new Intent(this, SubirFotoActivity.class);
         intent.putExtra("usuario", usuario);
         intent.putExtra("origen", "galeria");
@@ -447,4 +475,58 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         finish();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 0: {
+                // Si la petición se cancela, granResults estará vacío
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals(Manifest.permission.CAMERA)) {
+                    // PERMISO CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
+                    Intent intent = new Intent(this, SubirFotoActivity.class);
+                    intent.putExtra("usuario", usuario);
+                    intent.putExtra("origen", origenFoto);
+                    startActivity(intent);
+                    finish();
+                } else if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // PERMISO CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
+                    subirFoto();
+                } else if (permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    radioButtonGeolocalizacion.setChecked(false);
+                } else {
+                    // PERMISO DENEGADO, DESHABILITAR LA FUNCIONALIDAD O EJECUTAR ALTERNATIVA
+                    finish();
+                    primeraVez = true;
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("rotacion", "true");
+        outState.putString("origen", origenFoto);
+        if(origenFoto.equals("camara")) {
+            outState.putString("fichImg", fichImg.toString());
+        }
+        else if(origenFoto.equals("galeria")) {
+            if(!primeraVez && uriimagen != null) {
+                outState.putString("uriimagen", uriimagen.toString());
+            }
+            else {
+                primeraVez = false;
+            }
+        }
+        outState.putStringArrayList("etiquetasMostrar", etiquetasMostrar);
+        outState.putStringArrayList("etiquetasGuardar", etiquetasGuardar);
+    }
+
+    @Override
+    public void onBackPressed() {
+        primeraVez = true;
+        finish();
+    }
 }

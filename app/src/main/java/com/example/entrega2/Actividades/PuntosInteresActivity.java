@@ -89,6 +89,10 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
 
     private boolean primeraVez;
 
+    private String monumento;
+    private double latitud;
+    private double longitud;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +126,9 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
                 NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(extras.getInt("notification_id"));
             }
+            monumento = extras.getString("monumento");
+            latitud = extras.getDouble("latitud");
+            longitud = extras.getDouble("longitud");
         }
 
         // COMPROBAR ESTADO DE GOOGLE PLAY
@@ -185,7 +192,30 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
 
                 googleMap = map;
 
-                if(primeraVez){
+                if(latitud != 0 && longitud != 0) {
+                    CameraPosition Poscam = new CameraPosition.Builder()
+                            .target(new LatLng(latitud, longitud))
+                            .zoom(13)
+                            .build();
+                    CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
+                    googleMap.animateCamera(actualizar);
+                    LatLng latLng = new LatLng(latitud, longitud);
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(latLng.latitude, latLng.longitude))
+                            .title(monumento));
+
+                    double latActual = latLng.latitude;
+                    double longActual = latLng.longitude;
+                    marcadores.add(monumento + ": " + latActual + ", " + longActual);
+                    markers.put(monumento + ": " + latActual + ", " + longActual, marker);
+
+                    // Añadir marcador a la base de datos
+                    añadirMarcadorBD(latActual, longActual, monumento);
+
+                    // Añadir marcador a la listView
+                    añadirMarcadoresLV();
+                }
+                else if(primeraVez){
                     establecerUbicacionActual();
                     primeraVez = false;
                 }
@@ -250,7 +280,6 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
             }
             //PEDIR EL PERMISO
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            establecerUbicacionActual();
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
             FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
@@ -423,7 +452,19 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
                     if (status != null && status.getState().isFinished()) {
                         // Eliminar marcador a la listView
                         marcadores.remove(texto + ": " + latActual + ", " + longActual);
-                        ArrayAdapter adaptador = new ArrayAdapter<String>(contexto, android.R.layout.simple_list_item_1, marcadores);
+                        ArrayAdapter adaptador =
+                                new ArrayAdapter<String>(contexto, android.R.layout.simple_list_item_2, android.R.id.text1, marcadores){
+                                    @Override
+                                    public View getView(int position, View convertView, ViewGroup parent) {
+                                        View vista= super.getView(position, convertView, parent);
+                                        TextView lineaprincipal=(TextView) vista.findViewById(android.R.id.text1);
+                                        TextView lineasecundaria=(TextView) vista.findViewById(android.R.id.text2);
+                                        lineaprincipal.setText(marcadores.get(position).split(": ")[0]);
+                                        lineasecundaria.setText(marcadores.get(position).split(": ")[1]);
+                                        return vista;
+                                    }
+                                };
+
                         listViewMarcadores.setAdapter(adaptador);
 
                         // Eliminar marcador del mapa
@@ -474,6 +515,27 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
 
     private void detenerActualizador() {
         proveedordelocalizacion.removeLocationUpdates(actualizador);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 0: {
+                // Si la petición se cancela, granResults estará vacío
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // PERMISO CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
+                    Intent intent = new Intent(this, PuntosInteresActivity.class);
+                    intent.putExtra("usuario", usuario);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // PERMISO DENEGADO, DESHABILITAR LA FUNCIONALIDAD O EJECUTAR ALTERNATIVA
+                    finish();
+                }
+                return;
+            }
+        }
     }
 
 }
