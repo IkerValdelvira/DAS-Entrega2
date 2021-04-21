@@ -140,5 +140,10 @@
     <string name="Bienvenido">Bienvenido</string>
     <string name="SubiendoFoto">Subiendo foto...</string>
     <string name="ObteniendoGeolocalizacion">Obteniendo geolocalización...</string>
+    <string name="MonumentosTitulo">MONUMENTOS ALREDEDOR DEL MUNDO</string>
+    <string name="Marcar">Marcar</string>
+    <string name="Cambiar">Cambiar</string>
+    <string name="AbrirCamara">Abrir Cámara</string>
+    <string name="AbrirGaleria">Abrir Galería</string>
 
 </resources>

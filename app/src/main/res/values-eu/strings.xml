@@ -140,5 +140,10 @@
     <string name="Bienvenido">Ongi etorri</string>
     <string name="SubiendoFoto">Argazkia igotzen...</string>
     <string name="ObteniendoGeolocalizacion">Geokokapena lortzen...</string>
+    <string name="MonumentosTitulo">MUNDU OSOKO MONUMENTUAK</string>
+    <string name="Marcar">Markatu</string>
+    <string name="Cambiar">Aldatu</string>
+    <string name="AbrirCamara">Kamera Ireki</string>
+    <string name="AbrirGaleria">Galeria Ireki</string>
 
 </resources>

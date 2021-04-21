@@ -140,5 +140,10 @@
     <string name="Bienvenido">Wellcome</string>
     <string name="SubiendoFoto">Uploading picture...</string>
     <string name="ObteniendoGeolocalizacion">Getting geolocation...</string>
+    <string name="MonumentosTitulo">MONUMENTS AROUND THE WORLD</string>
+    <string name="Marcar">Mark</string>
+    <string name="Cambiar">Change</string>
+    <string name="AbrirCamara">Open Camera</string>
+    <string name="AbrirGaleria">Open Gallery</string>
 
 </resources>

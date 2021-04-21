@@ -1,5 +1,7 @@
 package com.example.entrega2.Widgets;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +22,13 @@ import androidx.work.WorkManager;
 
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
+import com.example.entrega2.Receivers.WidgetReceiver;
 import com.example.entrega2.Workers.UsuariosWorker;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * The configuration screen for the {@link MonumentosWidget MonumentosWidget} AppWidget.
@@ -46,6 +50,23 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         prefs.apply();
     }
 
+    // Crea la alarma asociada al widget y escribe en las preferencias el numero del PendingIntent asociado a la alarma
+    static void createAlarmPref(Context context, int appWidgetId, String usuario) {
+        // Enter relevant functionality for when the first widget is created
+        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, WidgetReceiver.class);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.putExtra("usuario", usuario);
+        Random random = new Random();
+        int num = random.nextInt(1000000 - 0 + 1) + 0;
+        PendingIntent pi = PendingIntent.getBroadcast(context, num, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 30000, 30000 , pi);
+
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_alarm", num);
+        prefs.apply();
+    }
+
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
     static String loadTitlePref(Context context, int appWidgetId) {
@@ -62,6 +83,20 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
+    }
+
+    // Elimina de la alarma asociada al widget y elimina de las preferencias el numero del PendingIntent asociado a la alarma
+    static void deleteAlarmPref(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        int num = prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_alarm", 0);
+        Intent intent = new Intent(context, WidgetReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, num, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(pi);
+
+        SharedPreferences.Editor prefs2 = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs2.remove(PREF_PREFIX_KEY + appWidgetId + "_alarm");
+        prefs2.apply();
     }
 
     @Override
@@ -138,6 +173,8 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
                                 else if(PasswordAuthentication.validatePassword(contrasena, hash)) {
                                     // When the button is clicked, store the string locally
                                     saveTitlePref(this, mAppWidgetId, usuario);
+
+                                    createAlarmPref(this, mAppWidgetId, usuario);
 
                                     // It is the responsibility of the configuration activity to update the app widget
                                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);

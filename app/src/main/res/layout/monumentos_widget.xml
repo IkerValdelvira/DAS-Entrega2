@@ -33,7 +33,7 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif-smallcaps"
             android:gravity="center"
-            android:text="MONUMENTOS ALREDEDOR DEL MUNDO"
+            android:text="@string/MonumentosTitulo"
             android:textColor="#000000"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -77,7 +77,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-smallcaps"
-                android:text="Marcar"
+                android:text="@string/Marcar"
                 android:textColor="#000000" />
 
             <Button
@@ -86,7 +86,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-smallcaps"
-                android:text="Cambiar"
+                android:text="@string/Cambiar"
                 android:textColor="#000000" />
         </LinearLayout>
 
@@ -105,7 +105,7 @@
             android:layout_gravity="right"
             android:layout_weight="1"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="Abrir cámara"
+            android:text="@string/AbrirCamara"
             android:textColor="#000000" />
 
         <Button
@@ -115,7 +115,7 @@
             android:layout_gravity="right"
             android:layout_weight="1"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="Abrir galería"
+            android:text="@string/AbrirGaleria"
             android:textColor="#000000" />
     </LinearLayout>
 

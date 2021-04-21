@@ -48,8 +48,10 @@ public class MonumentosWidget extends AppWidgetProvider {
         Intent intentCambiar = new Intent(context, MonumentosWidget.class);
         intentCambiar.setAction("com.example.entrega2.ACTUALIZAR_WIDGET");
         intentCambiar.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        Random random = new Random();
+        int num = random.nextInt(100000 - 0 + 1) + 0;
         PendingIntent pendingIntentCambiar = PendingIntent.getBroadcast(context,
-                7768, intentCambiar, PendingIntent.FLAG_UPDATE_CURRENT);
+                num, intentCambiar, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.buttonCambiarW, pendingIntentCambiar);
 
         // Boton marcar monumento
@@ -58,24 +60,30 @@ public class MonumentosWidget extends AppWidgetProvider {
         intentMarcar.putExtra("monumento", nombreMonumento);
         intentMarcar.putExtra("latitud", latitud);
         intentMarcar.putExtra("longitud", longitud);
+        random = new Random();
+        num = random.nextInt(100000 - 0 + 1) + 0;
         PendingIntent pendingIntentMarcar = PendingIntent.getActivity(context,
-                1000, intentMarcar, PendingIntent.FLAG_UPDATE_CURRENT);
+                num, intentMarcar, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.buttonMarcarW, pendingIntentMarcar);
 
         // Boton abrir camara
         Intent intentCamara = new Intent(context, SubirFotoActivity.class);
         intentCamara.putExtra("usuario", usuario);
         intentCamara.putExtra("origen", "camara");
+        random = new Random();
+        num = random.nextInt(100000 - 0 + 1) + 0;
         PendingIntent pendingIntentCamara = PendingIntent.getActivity(context,
-                1001, intentCamara, PendingIntent.FLAG_UPDATE_CURRENT);
+                num, intentCamara, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.buttonCamaraW, pendingIntentCamara);
 
         // Boton abrir galeria
         Intent intentGaleria = new Intent(context, SubirFotoActivity.class);
         intentGaleria.putExtra("usuario", usuario);
         intentGaleria.putExtra("origen", "galeria");
+        random = new Random();
+        num = random.nextInt(100000 - 0 + 1) + 0;
         PendingIntent pendingIntentGaleria = PendingIntent.getActivity(context,
-                1002, intentGaleria, PendingIntent.FLAG_UPDATE_CURRENT);
+                num, intentGaleria, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.buttonGaleriaW, pendingIntentGaleria);
 
         // Instruct the widget manager to update the widget
@@ -96,28 +104,18 @@ public class MonumentosWidget extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
         for (int appWidgetId : appWidgetIds) {
             MonumentosWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
+            MonumentosWidgetConfigureActivity.deleteAlarmPref(context, appWidgetId);
         }
     }
 
     @Override
     public void onEnabled(Context context) {
-        System.out.println("START ALARM");
         // Enter relevant functionality for when the first widget is created
-        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, WidgetReceiver.class);
-        intent.putExtra("usuario", usuario);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 7475, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 30000, 30000 , pi);
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
-        System.out.println("STOP ALARM");
-        Intent intent = new Intent(context, WidgetReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 7475, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        am.cancel(pi);
     }
 
 
@@ -125,7 +123,7 @@ public class MonumentosWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (intent.getAction().equals("com.example.entrega2.ACTUALIZAR_WIDGET")) {
-            int widgetId = intent.getIntExtra( AppWidgetManager.EXTRA_APPWIDGET_ID,
+            int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
             AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
             if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {

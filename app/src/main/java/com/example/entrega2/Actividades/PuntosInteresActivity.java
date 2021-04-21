@@ -341,7 +341,9 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
                                         .title(texto));
                                 markers.put(texto + ": " + latitud + ", " + longitud, marker);
 
-                                marcadores.add(texto + ": " + latitud + ", " + longitud);
+                                if(!marcadores.contains(texto + ": " + latitud + ", " + longitud)){
+                                    marcadores.add(texto + ": " + latitud + ", " + longitud);
+                                }
                                 añadirMarcadoresLV();
                             }
 
