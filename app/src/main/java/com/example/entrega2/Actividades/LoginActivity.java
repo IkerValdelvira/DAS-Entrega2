@@ -27,9 +27,8 @@ import androidx.work.WorkManager;
 import com.example.entrega2.Receivers.AlarmReceiver;
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.GetTokensUsuarioWorker;
-import com.example.entrega2.Workers.InsertTokenUsuarioWorker;
-import com.example.entrega2.Workers.ValidarUsuarioWorker;
+import com.example.entrega2.Workers.TokensWorker;
+import com.example.entrega2.Workers.UsuariosWorker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -95,12 +94,13 @@ public class LoginActivity extends AppCompatActivity {
         // Se comprueba que el usuario existe en la base de datos local
         else {
             Data datos = new Data.Builder()
+                    .putString("funcion", "validar")
                     .putString("username", username.getText().toString())
                     .build();
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ValidarUsuarioWorker.class)
+            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
@@ -145,12 +145,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void comprobarTokens(){
         Data datos = new Data.Builder()
+                .putString("funcion", "getTokens")
                 .putString("username", username.getText().toString())
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetTokensUsuarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(TokensWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -194,13 +195,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void insertToken(String pToken){
         Data datos = new Data.Builder()
+                .putString("funcion", "insertarToken")
                 .putString("username", username.getText().toString())
                 .putString("token", pToken)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(InsertTokenUsuarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(TokensWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

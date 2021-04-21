@@ -2,33 +2,18 @@ package com.example.entrega2.Dialogos;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DownloadManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
-import com.bumptech.glide.Glide;
-import com.example.entrega2.Actividades.InfoFotoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.EliminarCompartidaWorker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.json.JSONException;
-
-import java.io.File;
 
 public class DialogoDescargarFoto extends DialogFragment {
 

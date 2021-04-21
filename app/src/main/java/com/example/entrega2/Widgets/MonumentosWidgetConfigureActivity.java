@@ -1,6 +1,5 @@
 package com.example.entrega2.Widgets;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +18,9 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.entrega2.Actividades.MainActivity;
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.ValidarUsuarioWorker;
+import com.example.entrega2.Workers.UsuariosWorker;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -118,12 +116,13 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         // Se comprueba que el usuario existe en la base de datos local
         else {
             Data datos = new Data.Builder()
+                    .putString("funcion", "validar")
                     .putString("username", usuario)
                     .build();
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ValidarUsuarioWorker.class)
+            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();

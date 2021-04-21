@@ -16,10 +16,8 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import com.example.entrega2.Actividades.AmigosActivity;
-import com.example.entrega2.Actividades.AnadirAmigoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.EliminarAmigoWorker;
-import com.example.entrega2.Workers.EnviarSolicitudWorker;
+import com.example.entrega2.Workers.AmigosWorker;
 
 // Adaptador para la ListView personalizada de las peliculas favoritas
 public class AdaptadorListViewAmigos extends BaseAdapter{
@@ -82,13 +80,14 @@ public class AdaptadorListViewAmigos extends BaseAdapter{
                 String amigo = usernames[i];
                 // ENVIAR SOLICITUD
                 Data datos = new Data.Builder()
+                        .putString("funcion", "eliminar")
                         .putString("user", usuario)
                         .putString("friend", amigo)
                         .build();
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
-                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(EliminarAmigoWorker.class)
+                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(AmigosWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();

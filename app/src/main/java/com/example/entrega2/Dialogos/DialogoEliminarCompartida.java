@@ -3,9 +3,7 @@ package com.example.entrega2.Dialogos;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,14 +14,8 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.entrega2.Actividades.InfoFotoActivity;
-import com.example.entrega2.Actividades.MainActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.EliminarCompartidaWorker;
-import com.example.entrega2.Workers.EliminarFotoWorker;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.example.entrega2.Workers.CompartidasWorker;
 
 public class DialogoEliminarCompartida extends DialogFragment {
 
@@ -60,6 +52,7 @@ public class DialogoEliminarCompartida extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Eliminar de la base de datos
                 Data datos = new Data.Builder()
+                        .putString("funcion", "eliminar")
                         .putString("usuario", usuario)
                         .putString("imagen", imagen)
                         .putString("amigo", amigo)
@@ -67,7 +60,7 @@ public class DialogoEliminarCompartida extends DialogFragment {
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
-                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(EliminarCompartidaWorker.class)
+                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(CompartidasWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();

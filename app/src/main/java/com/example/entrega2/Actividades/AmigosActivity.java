@@ -16,11 +16,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.entrega2.Adaptadores.AdaptadorListViewAmigos;
-import com.example.entrega2.Adaptadores.AdaptadorListViewAnadir;
-import com.example.entrega2.Adaptadores.AdaptadorListViewSolicitud;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.BuscarUsuariosWorker;
-import com.example.entrega2.Workers.GetAmigosUsuarioWorker;
+import com.example.entrega2.Workers.AmigosWorker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,12 +66,13 @@ public class AmigosActivity extends AppCompatActivity implements AdaptadorListVi
 
     private void mostrarAmigos() {
         Data datos = new Data.Builder()
+                .putString("funcion", "getAmigos")
                 .putString("username", usuario)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetAmigosUsuarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(AmigosWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

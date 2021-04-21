@@ -37,7 +37,7 @@ import com.example.entrega2.Dialogos.DialogoCrearEtiqueta;
 import com.example.entrega2.Dialogos.DialogoPermisosCamara;
 import com.example.entrega2.Dialogos.DialogoPermisosLocalizacion;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.InsertarFotoWorker;
+import com.example.entrega2.Workers.ImagenesWorker;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -390,6 +390,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
 
         // Subir a la BD
         Data datos = new Data.Builder()
+                .putString("funcion", "insertar")
                 .putString("usuario", usuario)
                 .putString("imagen", imageName)
                 .putString("titulo", titulo)
@@ -402,7 +403,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(InsertarFotoWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

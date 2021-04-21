@@ -18,13 +18,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.entrega2.Adaptadores.AdaptadorRecyclerCompartidas;
-import com.example.entrega2.Adaptadores.AdaptadorRecyclerMisFotos;
 import com.example.entrega2.Dialogos.DialogoEliminarCompartida;
 import com.example.entrega2.Dialogos.DialogoEnviarComentario;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.EnviarComentarioWorker;
-import com.example.entrega2.Workers.EnviarSolicitudWorker;
-import com.example.entrega2.Workers.GetFotosCompartidasUsuarioWorker;
+import com.example.entrega2.Workers.CompartidasWorker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,12 +81,13 @@ public class CompartidasActivity extends AppCompatActivity implements DialogoEli
     private void cargarFotosCompartidas(){
         // Obtener las fotos
         Data datos = new Data.Builder()
+                .putString("funcion", "getCompartidas")
                 .putString("username", usuario)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetFotosCompartidasUsuarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(CompartidasWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -103,6 +101,7 @@ public class CompartidasActivity extends AppCompatActivity implements DialogoEli
 
                             if(jsonArray.length() == 0) {
                                 Toast.makeText(this, getString(R.string.NoFotosCompartidas), Toast.LENGTH_SHORT).show();
+                                recyclerView.setAdapter(null);
                             }
                             else{
                                 String[] usuarios = new String[jsonArray.length()];
@@ -115,7 +114,7 @@ public class CompartidasActivity extends AppCompatActivity implements DialogoEli
                                     ids[i] = foto.getString("imagen");
                                     titulos[i] = foto.getString("titulo");
                                 }
-                                adaptador = new AdaptadorRecyclerCompartidas(this,usuario,ids,usuarios,titulos);
+                                adaptador = new AdaptadorRecyclerCompartidas(this, usuario, ids, usuarios, titulos);
                                 recyclerView.setAdapter(adaptador);
                             }
                         } catch (JSONException e) {
@@ -137,6 +136,7 @@ public class CompartidasActivity extends AppCompatActivity implements DialogoEli
     public void enviarComentario(String amigo, String titulo, String comentario) {
         // ENVIAR SOLICITUD
         Data datos = new Data.Builder()
+                .putString("funcion", "enviarComentario")
                 .putString("from", usuario)
                 .putString("to", amigo)
                 .putString("titulo", titulo)
@@ -145,7 +145,7 @@ public class CompartidasActivity extends AppCompatActivity implements DialogoEli
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(EnviarComentarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(CompartidasWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

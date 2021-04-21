@@ -82,7 +82,7 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
             @Override
             public boolean onLongClick(View view) {
                 // Se crea un diálogo DialogoAñadirFavoritos con las opciones de listas de favoritos para añadir la película actual
-                DialogFragment dialogoEliminarCompartida = new DialogoEliminarCompartida(holder.usuarioFoto.getText().toString(), holder.id, usuario);
+                DialogFragment dialogoEliminarCompartida = new DialogoEliminarCompartida(holder.usuarioFoto.getText().toString().split(" ")[1], holder.id, usuario);
                 dialogoEliminarCompartida.show(contexto.getSupportFragmentManager(), "eliminar_compartida");
                 return false;
             }
@@ -94,7 +94,7 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
             @Override
             public void onClick(View view) {
                 // Se crea un diálogo DialogoAñadirFavoritos con las opciones de listas de favoritos para añadir la película actual
-                DialogFragment dialogoEnviarComentario = new DialogoEnviarComentario(holder.usuarioFoto.getText().toString(), holder.titulo.getText().toString());
+                DialogFragment dialogoEnviarComentario = new DialogoEnviarComentario(holder.usuarioFoto.getText().toString().split(" ")[1], holder.titulo.getText().toString());
                 dialogoEnviarComentario.show(contexto.getSupportFragmentManager(), "enviar_comentario");
             }
         });

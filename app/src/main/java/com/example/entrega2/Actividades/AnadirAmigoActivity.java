@@ -1,6 +1,5 @@
 package com.example.entrega2.Actividades;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
@@ -15,7 +14,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,20 +25,15 @@ import android.widget.Toast;
 
 import com.example.entrega2.Adaptadores.AdaptadorListViewAnadir;
 import com.example.entrega2.Adaptadores.AdaptadorListViewSolicitud;
-import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
 import com.example.entrega2.ServicioMusicaNotificacion;
-import com.example.entrega2.Workers.BuscarSolicitudesWorker;
-import com.example.entrega2.Workers.BuscarUsuariosPorDefectoWorker;
-import com.example.entrega2.Workers.BuscarUsuariosWorker;
-import com.example.entrega2.Workers.ValidarUsuarioWorker;
+import com.example.entrega2.Workers.SolicitudesWorker;
+import com.example.entrega2.Workers.UsuariosWorker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -147,13 +140,14 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
         }
         else{
             Data datos = new Data.Builder()
+                    .putString("funcion", "buscar")
                     .putString("username", usuario)
                     .putString("search", buscador.getText().toString())
                     .build();
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(BuscarUsuariosWorker.class)
+            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
@@ -213,12 +207,13 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
 
     private void mostrarSolicitudes() {
         Data datos = new Data.Builder()
+                .putString("funcion", "buscar")
                 .putString("toUser", usuario)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(BuscarSolicitudesWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -257,12 +252,13 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
 
     private void busquedaPorDefecto() {
         Data datos = new Data.Builder()
+                .putString("funcion", "buscarPorDefecto")
                 .putString("username", usuario)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(BuscarUsuariosPorDefectoWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

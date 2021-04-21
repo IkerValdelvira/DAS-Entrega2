@@ -2,9 +2,7 @@ package com.example.entrega2.Dialogos;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -17,15 +15,8 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.entrega2.Actividades.MainActivity;
-import com.example.entrega2.Actividades.SubirFotoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.CompartirFotoWorker;
-import com.example.entrega2.Workers.InsertarFotoWorker;
-import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.example.entrega2.Workers.CompartidasWorker;
 
 import java.util.ArrayList;
 
@@ -104,6 +95,7 @@ public class DialogoCompartirFoto extends DialogFragment {
                 }
 
                 Data datos = new Data.Builder()
+                        .putString("funcion", "compartir")
                         .putString("usuario", usuario)
                         .putString("imagen", fotoID)
                         .putString("titulo", titulo)
@@ -112,7 +104,7 @@ public class DialogoCompartirFoto extends DialogFragment {
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
-                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(CompartirFotoWorker.class)
+                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(CompartidasWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();

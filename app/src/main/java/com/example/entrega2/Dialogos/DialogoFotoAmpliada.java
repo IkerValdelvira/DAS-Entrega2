@@ -24,7 +24,6 @@ import androidx.work.WorkManager;
 import com.bumptech.glide.Glide;
 import com.example.entrega2.Actividades.InfoFotoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.GetFotoWorker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;

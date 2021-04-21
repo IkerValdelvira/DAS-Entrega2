@@ -17,8 +17,7 @@ import androidx.work.WorkManager;
 
 import com.example.entrega2.Actividades.AnadirAmigoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.EnviarSolicitudWorker;
-import com.example.entrega2.Workers.GestionarSolicitudWorker;
+import com.example.entrega2.Workers.SolicitudesWorker;
 
 // Adaptador para la ListView personalizada de las peliculas favoritas
 public class AdaptadorListViewSolicitud extends BaseAdapter{
@@ -82,6 +81,7 @@ public class AdaptadorListViewSolicitud extends BaseAdapter{
                 String amigo = usernames[i];
                 // AÑADIR AMIGOS Y BORRAR SOLICITUD
                 Data datos = new Data.Builder()
+                        .putString("funcion", "gestionar")
                         .putString("user", usuario)
                         .putString("friend", amigo)
                         .putString("status", "accepted")
@@ -89,7 +89,7 @@ public class AdaptadorListViewSolicitud extends BaseAdapter{
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
-                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GestionarSolicitudWorker.class)
+                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();
@@ -115,6 +115,7 @@ public class AdaptadorListViewSolicitud extends BaseAdapter{
                 String amigo = usernames[i];
                 // AÑADIR AMIGOS Y BORRAR SOLICITUD
                 Data datos = new Data.Builder()
+                        .putString("funcion", "gestionar")
                         .putString("user", usuario)
                         .putString("friend", amigo)
                         .putString("status", "refused")
@@ -122,7 +123,7 @@ public class AdaptadorListViewSolicitud extends BaseAdapter{
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
-                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GestionarSolicitudWorker.class)
+                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();

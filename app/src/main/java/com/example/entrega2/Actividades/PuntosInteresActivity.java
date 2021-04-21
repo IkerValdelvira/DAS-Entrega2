@@ -34,9 +34,7 @@ import com.example.entrega2.Dialogos.DialogoEliminarMarcador;
 import com.example.entrega2.Dialogos.DialogoPermisosLocalizacion;
 import com.example.entrega2.R;
 import com.example.entrega2.ServicioMusicaNotificacion;
-import com.example.entrega2.Workers.EliminarMarcadorWorker;
-import com.example.entrega2.Workers.GetMarcadoresUsuarioWorker;
-import com.example.entrega2.Workers.InsertarMarcadorWorker;
+import com.example.entrega2.Workers.MarcadoresWorker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -314,12 +312,13 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
 
     private void getMarcadoresGuardados() {
         Data datos = new Data.Builder()
+                .putString("funcion", "getMarcadores")
                 .putString("username", usuario)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetMarcadoresUsuarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(MarcadoresWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -361,6 +360,7 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
 
     private void añadirMarcadorBD(double latActual, double longActual, String texto) {
         Data datos = new Data.Builder()
+                .putString("funcion", "insertar")
                 .putString("username", usuario)
                 .putDouble("lat", latActual)
                 .putDouble("long", longActual)
@@ -369,7 +369,7 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(InsertarMarcadorWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(MarcadoresWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -436,6 +436,7 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
     @Override
     public void borrarMarcador(double latActual, double longActual, String texto) {
         Data datos = new Data.Builder()
+                .putString("funcion", "eliminar")
                 .putString("username", usuario)
                 .putDouble("lat", latActual)
                 .putDouble("long", longActual)
@@ -443,7 +444,7 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(EliminarMarcadorWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(MarcadoresWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

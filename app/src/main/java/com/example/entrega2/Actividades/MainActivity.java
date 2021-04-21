@@ -32,7 +32,7 @@ import com.example.entrega2.Dialogos.DialogoDescargarFoto;
 import com.example.entrega2.Preferencias;
 import com.example.entrega2.R;
 import com.example.entrega2.ServicioMusicaNotificacion;
-import com.example.entrega2.Workers.GetFotosUsuarioWorker;
+import com.example.entrega2.Workers.ImagenesWorker;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -135,12 +135,13 @@ public class MainActivity extends AppCompatActivity implements DialogoDescargarF
 
         // Obtener las fotos
         Data datos = new Data.Builder()
+                .putString("funcion", "getFotosUsuario")
                 .putString("username", usuario)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetFotosUsuarioWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

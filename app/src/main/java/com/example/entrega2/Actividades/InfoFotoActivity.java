@@ -9,14 +9,12 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,10 +29,8 @@ import com.example.entrega2.Dialogos.DialogoCompartirFoto;
 import com.example.entrega2.Dialogos.DialogoCrearEtiqueta;
 import com.example.entrega2.Dialogos.DialogoFotoAmpliada;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.ActualizarFotoWorker;
-import com.example.entrega2.Workers.EliminarFotoWorker;
-import com.example.entrega2.Workers.GetAmigosParaCompartirWorker;
-import com.example.entrega2.Workers.GetFotoWorker;
+import com.example.entrega2.Workers.AmigosWorker;
+import com.example.entrega2.Workers.ImagenesWorker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -43,7 +39,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -110,13 +105,14 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
 
         // Extraer información de la foto de la base de datos
         Data datos = new Data.Builder()
+                .putString("funcion", "getFoto")
                 .putString("username", usuario)
                 .putString("imagen", fotoID)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetFotoWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -216,6 +212,7 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         }
         else {
             Data datos = new Data.Builder()
+                    .putString("funcion", "actualizar")
                     .putString("usuario", usuario)
                     .putString("imagen", fotoID)
                     .putString("titulo", titulo)
@@ -227,7 +224,7 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ActualizarFotoWorker.class)
+            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
@@ -251,13 +248,14 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
     public void onClickEliminar(View v) {
         // Eliminar de la base de datos
         Data datos = new Data.Builder()
+                .putString("funcion", "eliminar")
                 .putString("usuario", usuario)
                 .putString("imagen", fotoID)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(EliminarFotoWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
@@ -290,13 +288,14 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
     public void onClickCompartir(View v) {
 
         Data datos = new Data.Builder()
+                .putString("funcion", "getAmigosCompartir")
                 .putString("usuario", usuario)
                 .putString("imagen", fotoID)
                 .build();
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(GetAmigosParaCompartirWorker.class)
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(AmigosWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();

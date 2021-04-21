@@ -19,8 +19,7 @@ import androidx.work.WorkManager;
 
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.InsertarUsuarioWorker;
-import com.example.entrega2.Workers.ValidarUsuarioWorker;
+import com.example.entrega2.Workers.UsuariosWorker;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -82,13 +81,14 @@ public class RegisterActivity extends AppCompatActivity {
         else{
             String hashPassword = PasswordAuthentication.generateStrongPasswordHash(password.getText().toString());
             Data datos = new Data.Builder()
+                    .putString("funcion", "validar")
                     .putString("username", username.getText().toString())
                     .putString("password", hashPassword)
                     .build();
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
-            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ValidarUsuarioWorker.class)
+            OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
@@ -103,9 +103,15 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                             else {
                                 // Si el usuario no existe, se inserta en la base de datos local y se destruye la actividad actual
-                                OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(InsertarUsuarioWorker.class)
+                                Data datos2 = new Data.Builder()
+                                        .putString("funcion", "insertar")
+                                        .putString("username", username.getText().toString())
+                                        .putString("password", hashPassword)
+                                        .build();
+
+                                OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                                         .setConstraints(restricciones)
-                                        .setInputData(datos)
+                                        .setInputData(datos2)
                                         .build();
 
                                 WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr2.getId())

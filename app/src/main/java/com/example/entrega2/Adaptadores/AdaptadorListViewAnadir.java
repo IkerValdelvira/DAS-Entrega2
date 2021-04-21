@@ -17,11 +17,7 @@ import androidx.work.WorkManager;
 
 import com.example.entrega2.Actividades.AnadirAmigoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.Workers.EnviarSolicitudWorker;
-import com.example.entrega2.Workers.GetTokensUsuarioWorker;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.example.entrega2.Workers.SolicitudesWorker;
 
 import java.util.ArrayList;
 
@@ -81,13 +77,14 @@ public class AdaptadorListViewAnadir extends BaseAdapter{
                 String username = usernames[i];
                 // ENVIAR SOLICITUD
                 Data datos = new Data.Builder()
+                        .putString("funcion", "enviar")
                         .putString("from", usuario)
                         .putString("to", username)
                         .build();
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
-                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(EnviarSolicitudWorker.class)
+                OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();
