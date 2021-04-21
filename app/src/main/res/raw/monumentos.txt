@@ -48,3 +48,54 @@ Palacio Real de Madrid, España --> 40.4178207;-3.7151114
 Palacio Gyeongbokgung, Corea del Sur --> 37.5797539;126.9766807
 Abadía del Monte Saint-Michel, Francia --> 48.63603;-1.51208
 Castillo Urquhart, Reino Unido --> 57.3241044;-4.4416789
+Qutab Minar, India --> 28.5241657;77.1858629
+Templo Kiyomizudera, Japón --> 34.972373962402344;135.0811767578125
+Mezquita Hassan II, Marruecos --> 33.6082243;-7.6324728
+Kremlin de Moscú, Rusia --> 55.7514952;37.6181531
+Parlamento de Budapest, Hungría --> 47.5070496;19.0459177
+Teatro de la Ópera de Sidney, Australia --> -33.8567;151.21502
+Monumento Dugald Stewart en Edimburgo, Reino Unido --> 55.95449447631836;-3.1845009326934814
+Yacimiento arqueológico de Palenque, México --> 17.453161;-91.8121231
+Alhambra de Granada, España --> 37.1760599;-3.5881103
+Mezquita Kutubía, Marruecos --> 31.6237506;-7.9933578
+Mezquita de Djingareyber, Malí --> 16.7716304;-3.0099687
+Monte Rushmore, Estados Unidos --> 43.61941;-95.800571
+Parlamento de Viena, Austria --> 48.208087;16.3584649
+Burj Al Arab, Emiratos Árabes Unidos --> 25.1411936;55.1854609
+Mezquita de Córdoba, España --> 37.8790301;-4.7795357
+Puente de los suspiros en Oxford, Reino Unido --> 51.7544868;-1.2537788
+Palacio da Pena en Sintra, Portugal --> 38.7875516;-9.3905487
+Ruinas de Iximche, Guatemala --> 14.7340943;-90.994914
+Nordkapp, Noruega --> 71.1699506;25.7858893
+Reloj Astronómico de Praga, Chequia --> 50.0869802;14.4207138
+Ruinas romanas de Pompeya, México --> 20.02556;-97.06361
+Estatua de la Libertad, Estados Unidos --> 40.6892532;-74.0445482
+Torres Petronas, Malasia --> 3.1579679;101.7112048
+Fontana di Trevi, Italia --> 41.9009778;12.483285
+Templo dorado, India --> 31.6197265;74.8773324
+Basílica del Sagrado Corazón en París, Francia --> 48.8868058;2.3430153
+Panteón de Roma, Italia --> 41.8986159;12.4768334
+Lonja de los Paños en Cracovia, Polonia --> 50.0617022,19.937357
+Foro Romano en Roma, Italia --> 41.8917237;12.4866715
+Ruinas de Tikal, Guatemala --> 17.22529;-89.6117
+Muro de Berlín, Alemania --> 52.5034457;13.4439406
+El Faro de Alejandría, Egipto --> 31.2140113;29.8856232
+Iglesias de cúpulas azules en Santorini, Grecia --> 36.4071112;25.4566637
+Colosos de Memnón en Luxor, Egito --> 25.720429;32.6104407
+Columna de Nelson en Londres, Reino Unido --> 51.50777053833008;-0.1279163509607315
+Torre de Lucerna, Suiza --> 47.0518213;8.3076912
+Castillo de Osaka, Japón --> 34.6873398;135.5258386
+Castillo de Bran, Rumania --> 45.5150774;25.3672373
+Ruinas de Ayutthaya, Tailandia --> 14.35167;100.57739
+Hawa Mahal, India --> 26.923932;75.8268652
+Ruinas de Persépolis, Irán --> 29.9351669;52.8904041
+Catedral de Berlín, Alemania --> 52.5190822;13.4010942
+Gran Santuario Kasuga en Nara, Japón --> 34.6815575;135.8479422
+El palacio del Escorial, España --> 40.5890662;-4.1473949
+Cúpula de la Roca en Jerusalén, Israel --> 31.7779986;35.235395
+Castillo de Dunnottar, Reino Unido --> 56.94605;-2.19641
+Capitolio, Estados Unidos --> 38.889469146728516;-77.00861358642578
+Construcciones de Delfos, Grecia --> 38.48237863024506;22.50115649619233
+Parque Güell, España --> 41.4139288;2.1525588
+Ruinas de Éfeso, Turquía --> 37.9489945;27.3678537
+El castillo de Chambord, Francia --> 47.616;1.517
