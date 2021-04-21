@@ -1,7 +1,6 @@
 package com.example.entrega2.Actividades;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -9,22 +8,18 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.entrega2.Dialogos.DialogoCrearMarcador;
 import com.example.entrega2.Dialogos.DialogoPermisosLocalizacion;
 import com.example.entrega2.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -43,8 +38,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,6 +203,10 @@ public class UbicacionActivity extends FragmentActivity implements OnMapReadyCal
 
     }
 
+    // Obtener ubicacion actual y actualizar camara google maps
+    private FusedLocationProviderClient proveedordelocalizacion;
+    private LocationCallback actualizador;
+
     private void establecerUbicacionActual() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //EL PERMISO NO ESTÁ CONCEDIDO, PEDIRLO
@@ -226,69 +223,34 @@ public class UbicacionActivity extends FragmentActivity implements OnMapReadyCal
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
-            FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
-            proveedordelocalizacion.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                double latitud = location.getLatitude();
-                                double longitud = location.getLongitude();
-                                CameraPosition Poscam = new CameraPosition.Builder()
-                                        .target(new LatLng(latitud, longitud))
-                                        .zoom(13)
-                                        .build();
-                                CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
-                                googleMap.animateCamera(actualizar);
-                            } else {
-                                Toast.makeText(contexto, getString(R.string.GeolocalizacionDesconocida), Toast.LENGTH_SHORT).show();
-                                volverAConectar(location);
-                            }
-                        }
-                    })
-                    .addOnFailureListener(this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(contexto, getString(R.string.NoUbicacion), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-    }
+            Toast.makeText(this, getString(R.string.ObteniendoGeolocalizacion), Toast.LENGTH_SHORT).show();
+            LocationRequest peticion = LocationRequest.create();
+            peticion.setInterval(1000);
+            peticion.setFastestInterval(5000);
+            peticion.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-    // Si no se consigue la ubicacion, se busca cada segundo hasta encontrarla
-    private FusedLocationProviderClient proveedordelocalizacion;
-    private LocationCallback actualizador;
+            actualizador = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    if (locationResult != null) {
+                        double latitud = locationResult.getLastLocation().getLatitude();
+                        double longitud = locationResult.getLastLocation().getLongitude();
+                        CameraPosition Poscam = new CameraPosition.Builder()
+                                .target(new LatLng(latitud, longitud))
+                                .zoom(13)
+                                .build();
+                        CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
+                        googleMap.animateCamera(actualizar);
 
-    @SuppressLint("MissingPermission")
-    private void volverAConectar(Location location) {
-        System.out.println("VOLVER A CONECTAR");
-        LocationRequest peticion = LocationRequest.create();
-        peticion.setInterval(1000);
-        peticion.setFastestInterval(5000);
-        peticion.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        actualizador = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                if (location != null) {
-                    double latitud = location.getLatitude();
-                    double longitud = location.getLongitude();
-                    CameraPosition Poscam = new CameraPosition.Builder()
-                            .target(new LatLng(latitud, longitud))
-                            .zoom(13)
-                            .build();
-                    CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
-                    googleMap.animateCamera(actualizar);
-
-                    detenerActualizador();
+                        detenerActualizador();
+                    }
                 }
-            }
-        };
+            };
 
-        proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
-        proveedordelocalizacion.requestLocationUpdates(peticion, actualizador, null);
-
+            proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
+            proveedordelocalizacion.requestLocationUpdates(peticion, actualizador, null);
+        }
     }
 
     private void detenerActualizador() {

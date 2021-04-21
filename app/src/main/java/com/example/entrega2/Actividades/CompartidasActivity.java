@@ -69,7 +69,13 @@ public class CompartidasActivity extends AppCompatActivity implements DialogoEli
 
         // Inicializacion RecyclerView
         recyclerView = findViewById(R.id.recyclerViewCompartidas);
-        gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT){
+            gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
+        }
+        else{
+            gridLayout = new GridLayoutManager(this,4,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
+        }
         recyclerView.setLayoutManager(gridLayout);
 
         cargarFotosCompartidas();

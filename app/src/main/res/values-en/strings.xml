@@ -52,7 +52,7 @@
     <string name="QueIdioma">Which language do you want to select?</string>
     <string name="Idiomas">Languages</string>
     <string name="MisAmigos">MY FRIENDS</string>
-    <string name="MostrarOcultarPreferencias">Show/Hide Preferences</string>
+    <string name="Preferencias">Preferences</string>
     <string name="PuntosInteres">Points of interest</string>
     <string name="PuntosInteresTitulo">POINTS OF INTERES</string>
     <string name="Marcadores">Markers:</string>
@@ -137,5 +137,8 @@
     <string name="DescargarFoto">Download picture</string>
     <string name="SeguroDescargar">Are you sure you want to download this picture?</string>
     <string name="MensajeWidget">Enter the user credentials with which to create the widget:</string>
+    <string name="Bienvenido">Wellcome</string>
+    <string name="SubiendoFoto">Uploading picture...</string>
+    <string name="ObteniendoGeolocalizacion">Getting geolocation...</string>
 
 </resources>

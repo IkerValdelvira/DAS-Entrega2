@@ -1,8 +1,10 @@
-package com.example.entrega2;
+package com.example.entrega2.Receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.example.entrega2.ServicioMusicaNotificacion;
 
 public class NotificationDismissedReceiver extends BroadcastReceiver {
     @Override

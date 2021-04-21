@@ -64,7 +64,7 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
         holder.usuario = usuario;
         holder.id = ids[position];
         holder.titulo.setText(titulos[position]);
-        holder.usuarioFoto.setText(usuarios[position]);
+        holder.usuarioFoto.setText(contexto.getString(R.string.CompartidaPor) + " " +  usuarios[position]);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();

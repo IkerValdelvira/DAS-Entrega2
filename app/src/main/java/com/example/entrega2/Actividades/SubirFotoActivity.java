@@ -14,18 +14,15 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
@@ -327,7 +324,7 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
 
             // Opcion geolocalizacion
             if(radioButtonGeolocalizacion.isChecked()) {
-                getUbicacionActual();
+                establecerUbicacionActual();
             }
             else {
                 subirFoto();
@@ -335,7 +332,11 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         }
     }
 
-    private void getUbicacionActual() {
+    // Obtener ubicacion actual
+    private FusedLocationProviderClient proveedordelocalizacion;
+    private LocationCallback actualizador;
+
+    private void establecerUbicacionActual() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //EL PERMISO NO ESTÁ CONCEDIDO, PEDIRLO
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -351,61 +352,29 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
-            FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
-            proveedordelocalizacion.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                latitud = String.valueOf(location.getLatitude());
-                                longitud = String.valueOf(location.getLongitude());
+            Toast.makeText(this, getString(R.string.ObteniendoGeolocalizacion), Toast.LENGTH_SHORT).show();
+            LocationRequest peticion = LocationRequest.create();
+            peticion.setInterval(1000);
+            peticion.setFastestInterval(5000);
+            peticion.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-                                subirFoto();
+            actualizador = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    if (locationResult != null) {
+                        latitud = String.valueOf(locationResult.getLastLocation().getLatitude());
+                        longitud = String.valueOf(locationResult.getLastLocation().getLongitude());
 
-                            } else {
-                                Toast.makeText(SubirFotoActivity.this, getString(R.string.GeolocalizacionDesconocida), Toast.LENGTH_SHORT).show();
-                                volverAConectar();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(SubirFotoActivity.this, getString(R.string.NoUbicacion), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-    }
-
-    // Si no se consigue la ubicacion, se busca cada segundo hasta encontrarla
-    private FusedLocationProviderClient proveedordelocalizacion;
-    private LocationCallback actualizador;
-
-    @SuppressLint("MissingPermission")
-    private void volverAConectar() {
-        LocationRequest peticion = LocationRequest.create();
-        peticion.setInterval(1000);
-        peticion.setFastestInterval(5000);
-        peticion.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        actualizador = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                if (locationResult != null) {
-                    latitud = String.valueOf(locationResult.getLastLocation().getLatitude());
-                    longitud = String.valueOf(locationResult.getLastLocation().getLongitude());
-
-                    subirFoto();
-
-                    detenerActualizador();
+                        detenerActualizador();
+                        subirFoto();
+                    }
                 }
-            }
-        };
+            };
 
-        proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
-        proveedordelocalizacion.requestLocationUpdates(peticion, actualizador, null);
-
+            proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
+            proveedordelocalizacion.requestLocationUpdates(peticion, actualizador, null);
+        }
     }
 
     private void detenerActualizador() {
@@ -441,17 +410,18 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
                     if (status != null && status.getState().isFinished()) {
-                        try {
-                            Thread.sleep(3000); // Delay para que se suba la foto a Firebase y se pueda cargar correctamente
-                            Toast.makeText(this, getString(R.string.FotoSubida), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SubirFotoActivity.this, MainActivity.class);
-                            intent.putExtra("usuario", usuario);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            primeraVez = true;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        Toast.makeText(this, getString(R.string.SubiendoFoto), Toast.LENGTH_LONG).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(SubirFotoActivity.this, getString(R.string.FotoSubida), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SubirFotoActivity.this, MainActivity.class);
+                                intent.putExtra("usuario", usuario);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                primeraVez = true;
+                            }
+                        }, 4000);
                     }
                 });
 

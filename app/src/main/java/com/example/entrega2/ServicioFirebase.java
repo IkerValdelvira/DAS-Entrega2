@@ -50,9 +50,10 @@ public class ServicioFirebase extends FirebaseMessagingService {
                 Intent i = new Intent(this, AnadirAmigoActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.putExtra("usuario", to);
+                i.putExtra("solicitudes", true);
                 PendingIntent intentEnNot = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                elBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
+                elBuilder.setSmallIcon(android.R.drawable.ic_input_add)
                         .setContentTitle(getString(R.string.SolicitudRecibida))
                         .setContentText(getString(R.string.Hola) + " " + to + "!!! " + from + " " + getString(R.string.QuiereAmigo))
                         .setSubText(getString(R.string.Solicitud))
@@ -62,7 +63,7 @@ public class ServicioFirebase extends FirebaseMessagingService {
             }
 
             else if(remoteMessage.getNotification().getClickAction().equals("COMENTARIO")) {
-                elBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
+                elBuilder.setSmallIcon(android.R.drawable.ic_menu_send)
                         .setContentTitle(to + ", " + from + " " + getString(R.string.HaComentado) + " " + titulo)
                         .setContentText(comentario)
                         .setSubText(getString(R.string.Comentario))
@@ -76,7 +77,7 @@ public class ServicioFirebase extends FirebaseMessagingService {
                 i.putExtra("usuario", to);
                 PendingIntent intentEnNot = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                elBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
+                elBuilder.setSmallIcon(android.R.drawable.ic_menu_share)
                         .setContentTitle(getString(R.string.FotoCompartidaNot))
                         .setContentText(getString(R.string.Hola) + " " + to + "!!! " + from + " " + getString(R.string.HaCompartido) + " '" + titulo + "'" + getString(R.string.TocaRevisarCompartidas))
                         .setSubText(getString(R.string.Solicitud))

@@ -52,7 +52,7 @@
     <string name="QueIdioma">Zein hizkuntz aukeratu nahi duzu?</string>
     <string name="Idiomas">Hizkuntzak</string>
     <string name="MisAmigos">NIRE LAGUNAK</string>
-    <string name="MostrarOcultarPreferencias">Erakutsi/Ezkutatu Lehentasunak</string>
+    <string name="Preferencias">Lehentasunak</string>
     <string name="PuntosInteres">Interesguneak</string>
     <string name="PuntosInteresTitulo">INTERES PUNTUAK</string>
     <string name="Marcadores">Markadoreak:</string>
@@ -137,5 +137,8 @@
     <string name="DescargarFoto">Argazkia deskargatu</string>
     <string name="SeguroDescargar">Ziur zaude argazki hau deskargatu nahi duzula?</string>
     <string name="MensajeWidget">Idatzi widget-a sortzeko erabiltzailearen egiaztagiriak:</string>
+    <string name="Bienvenido">Ongi etorri</string>
+    <string name="SubiendoFoto">Argazkia igotzen...</string>
+    <string name="ObteniendoGeolocalizacion">Geokokapena lortzen...</string>
 
 </resources>

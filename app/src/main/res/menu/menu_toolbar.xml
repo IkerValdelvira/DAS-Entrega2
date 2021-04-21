@@ -17,7 +17,7 @@
     <item
         android:id="@+id/preferencias"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:title="@string/MostrarOcultarPreferencias"
+        android:title="@string/Preferencias"
         app:showAsAction="never" />
 
     <item

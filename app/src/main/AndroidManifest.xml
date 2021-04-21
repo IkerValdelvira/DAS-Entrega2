@@ -16,17 +16,20 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/CustomTheme"
         android:usesCleartextTraffic="true">
-        <receiver android:name=".Widgets.MonumentosWidget" android:label="Widget DAS">
+        <activity android:name=".Actividades.PreferenciasActivity"></activity>
+
+        <receiver
+            android:name=".Widgets.MonumentosWidget"
+            android:label="Widget DAS">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="com.example.entrega2.ACTUALIZAR_WIDGET" />
             </intent-filter>
@@ -41,7 +44,6 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Actividades.CompartidasActivity">
             <intent-filter>
                 <action android:name="COMPARTIDAS" />
@@ -52,8 +54,9 @@
         <activity android:name=".Actividades.UbicacionActivity" />
         <activity android:name=".Actividades.InfoFotoActivity" />
         <activity android:name=".Actividades.SubirFotoActivity" /> <!-- Bradcast Receiver para la alarma de las notificaciones -->
-        <receiver android:name=".AlarmReceiver" />
-        <receiver android:name=".NotificationDismissedReceiver" />
+        <receiver android:name=".Receivers.AlarmReceiver" />
+        <receiver android:name=".Receivers.NotificationDismissedReceiver" />
+        <receiver android:name=".Receivers.WidgetReceiver" />
 
         <service android:name=".ServicioMusicaNotificacion" />
 

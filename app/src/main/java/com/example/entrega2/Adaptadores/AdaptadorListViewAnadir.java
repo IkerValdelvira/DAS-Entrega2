@@ -36,11 +36,14 @@ public class AdaptadorListViewAnadir extends BaseAdapter{
 
     private String usuario;                     // Nombre de usuario actual
 
+    private ArrayList<String> solicitados;
+
     // Constructor del adaptador
-    public AdaptadorListViewAnadir(String pUsuario, AnadirAmigoActivity pContext, String[] pUsernames)  {
+    public AdaptadorListViewAnadir(String pUsuario, AnadirAmigoActivity pContext, String[] pUsernames, ArrayList<String> pSolicitados)  {
         usuario = pUsuario;
         contexto = pContext;
         usernames = pUsernames;
+        solicitados = pSolicitados;
         inflater = (LayoutInflater) contexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -93,7 +96,8 @@ public class AdaptadorListViewAnadir extends BaseAdapter{
                         .observe(contexto, status -> {
                             if (status != null && status.getState().isFinished()) {
                                 Toast.makeText(contexto, contexto.getString(R.string.SolicitudEnviada), Toast.LENGTH_SHORT).show();
-                            }
+                                botonMandarSolicitud.setAlpha(.5f);
+                                botonMandarSolicitud.setEnabled(false);                            }
                         });
                 WorkManager.getInstance(contexto).enqueue(otwr);
             }
@@ -101,6 +105,11 @@ public class AdaptadorListViewAnadir extends BaseAdapter{
 
         // Se asigna a cada variable el contenido que se quiere mostrar en ese elemento: título y portada de la película
         textViewUsername.setText(usernames[i]);
+
+        if(solicitados.contains(usernames[i])) {
+            botonMandarSolicitud.setAlpha(.5f);
+            botonMandarSolicitud.setEnabled(false);
+        }
         return view;
     }
 

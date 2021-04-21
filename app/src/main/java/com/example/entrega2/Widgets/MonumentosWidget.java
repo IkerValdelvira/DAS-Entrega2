@@ -12,7 +12,7 @@ import android.widget.RemoteViews;
 import com.example.entrega2.Actividades.PuntosInteresActivity;
 import com.example.entrega2.Actividades.SubirFotoActivity;
 import com.example.entrega2.R;
-import com.example.entrega2.WidgetBroadcastReceiver;
+import com.example.entrega2.Receivers.WidgetReceiver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,9 +28,6 @@ public class MonumentosWidget extends AppWidgetProvider {
 
     private static String usuario;
 
-    private AlarmManager am;
-    private PendingIntent pi;
-
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
@@ -39,14 +36,6 @@ public class MonumentosWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.monumentos_widget);
         views.setTextViewText(R.id.textViewUsuarioW, context.getString(R.string.Hola) + " " + usuario + "!!!");
 
-        // Boton cambiar monumento
-        Intent intentCambiar = new Intent(context, MonumentosWidget.class);
-        intentCambiar.setAction("com.example.entrega2.ACTUALIZAR_WIDGET");
-        intentCambiar.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        PendingIntent pendingIntentCambiar = PendingIntent.getBroadcast(context,
-                7768, intentCambiar, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setOnClickPendingIntent(R.id.buttonCambiarW, pendingIntentCambiar);
-
         // Elegir monumento aleatorio
         views.setImageViewResource(R.id.imageViewPinW, R.drawable.location);
         String monumento = getMonumento(context);
@@ -54,6 +43,14 @@ public class MonumentosWidget extends AppWidgetProvider {
         double latitud = Double.parseDouble(monumento.split(" --> ")[1].split(";")[0]);
         double longitud = Double.parseDouble(monumento.split(" --> ")[1].split(";")[1]);
         views.setTextViewText(R.id.textViewMonumentoW, nombreMonumento);
+
+        // Boton cambiar monumento
+        Intent intentCambiar = new Intent(context, MonumentosWidget.class);
+        intentCambiar.setAction("com.example.entrega2.ACTUALIZAR_WIDGET");
+        intentCambiar.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        PendingIntent pendingIntentCambiar = PendingIntent.getBroadcast(context,
+                7768, intentCambiar, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.buttonCambiarW, pendingIntentCambiar);
 
         // Boton marcar monumento
         Intent intentMarcar = new Intent(context, PuntosInteresActivity.class);
@@ -83,6 +80,7 @@ public class MonumentosWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+
     }
 
     @Override
@@ -103,21 +101,29 @@ public class MonumentosWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
+        System.out.println("START ALARM");
         // Enter relevant functionality for when the first widget is created
-        am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, WidgetBroadcastReceiver.class);
-        pi = PendingIntent.getBroadcast(context, 7475, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 30 * 60000 , pi);
+        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, WidgetReceiver.class);
+        intent.putExtra("usuario", usuario);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 7475, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 30000, 30000 , pi);
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+        System.out.println("STOP ALARM");
+        Intent intent = new Intent(context, WidgetReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 7475, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         am.cancel(pi);
     }
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
         if (intent.getAction().equals("com.example.entrega2.ACTUALIZAR_WIDGET")) {
             int widgetId = intent.getIntExtra( AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -127,6 +133,7 @@ public class MonumentosWidget extends AppWidgetProvider {
             }
         }
     }
+
 
     public static String getMonumento(Context contexto) {
         ArrayList<String> monumentos = new ArrayList<>();
@@ -144,13 +151,12 @@ public class MonumentosWidget extends AppWidgetProvider {
 
             Random randomGenerator = new Random();
             int index = randomGenerator.nextInt(monumentos.size());
-            System.out.println("RANDOM: " + index);
             monumento = monumentos.get(index);
-            System.out.println("Monumento: " + monumento);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         return monumento;
     }
+
 }

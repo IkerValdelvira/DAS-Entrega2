@@ -81,6 +81,7 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
 
         // Inicialización del nombre de usuario obtenido a través del Bundle asociado al Intent que ha creado la actividad
         Bundle extras = getIntent().getExtras();
+        Boolean solicitud = false;
         if (extras != null) {
             usuario = extras.getString("usuario");
             if(extras.getString("toUser") != null){
@@ -93,6 +94,8 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
                 NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(extras.getInt("notification_id"));
             }
+            System.out.println("SOLICITUD: " + extras.getBoolean("solicitud"));
+            solicitud = extras.getBoolean("solicitudes");
         }
 
         // Inicialización de los elementos 'spinner' y 'listView' del layout 'activity_favoritos.xml'
@@ -107,6 +110,9 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
         adaptadorSpinner = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner_selected_layout, opciones);
         adaptadorSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adaptadorSpinner);
+        if(solicitud){
+            spinner.setSelection(1);
+        }
 
         // Listener al seleccionar un elemento del Spinner
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -178,11 +184,17 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
                                     }
                                 }
 
+                                JSONArray solicitados = jsonObject.getJSONArray("solicitados");
+                                ArrayList<String> solicitadosList = new ArrayList<String>();
+                                for (int i=0; i<solicitados.length(); i++) {
+                                    solicitadosList.add(solicitados.getString(i));
+                                }
+
                                 usernames = new String[mostrar.size()];
                                 for(int i = 0; i < mostrar.size(); i++) {
                                     usernames[i] = mostrar.get(i);
                                 }
-                                AdaptadorListViewAnadir adaptadorListView = new AdaptadorListViewAnadir(usuario, AnadirAmigoActivity.this, usernames);
+                                AdaptadorListViewAnadir adaptadorListView = new AdaptadorListViewAnadir(usuario, AnadirAmigoActivity.this, usernames, solicitadosList);
                                 listView.setAdapter(adaptadorListView);
 
                                 if(usernames.length == 0) {
@@ -281,11 +293,17 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
                                 }
                             }
 
+                            JSONArray solicitados = jsonObject.getJSONArray("solicitados");
+                            ArrayList<String> solicitadosList = new ArrayList<String>();
+                            for (int i=0; i<solicitados.length(); i++) {
+                                solicitadosList.add(solicitados.getString(i));
+                            }
+
                             usernames = new String[mostrar.size()];
                             for(int i = 0; i < mostrar.size(); i++) {
                                 usernames[i] = mostrar.get(i);
                             }
-                            AdaptadorListViewAnadir adaptadorListView = new AdaptadorListViewAnadir(usuario, AnadirAmigoActivity.this, usernames);
+                            AdaptadorListViewAnadir adaptadorListView = new AdaptadorListViewAnadir(usuario, AnadirAmigoActivity.this, usernames, solicitadosList);
                             listView.setAdapter(adaptadorListView);
 
                             if(usernames.length == 0) {

@@ -13,9 +13,7 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import android.app.AlarmManager;
 import android.app.DownloadManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,10 +24,10 @@ import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.entrega2.Adaptadores.AdaptadorRecyclerMisFotos;
-import com.example.entrega2.AlarmReceiver;
 import com.example.entrega2.Dialogos.DialogoDescargarFoto;
 import com.example.entrega2.Preferencias;
 import com.example.entrega2.R;
@@ -42,16 +40,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias, DialogoDescargarFoto.ListenerdelDialogo {
+public class MainActivity extends AppCompatActivity implements DialogoDescargarFoto.ListenerdelDialogo {
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
-
-    // View para la gestión de las preferencias
-    private View preferencias;
-    private int prefsVisibles;
 
     // Para el RecyclerView
     private RecyclerView recyclerView;
@@ -95,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
 
         final DrawerLayout elmenudesplegable = findViewById(R.id.drawer_layout);
         NavigationView elnavigation = findViewById(R.id.elnavigationview);
+        View headerView = elnavigation.getHeaderView(0);
+        TextView textViewBienvenido = headerView.findViewById(R.id.textViewBienvenido);
+        textViewBienvenido.setText(getString(R.string.Bienvenido) + " " + usuario + "!!!");
         elnavigation.setNavigationItemSelectedListener(new
            NavigationView.OnNavigationItemSelectedListener() {
                @Override
@@ -126,31 +122,15 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
                }
            });
 
-        // Inicializacíon del fragment que contiene la selección de las preferencias
-        preferencias = findViewById(R.id.fragmentPreferencias);
-        prefsVisibles = 0;
-        if (savedInstanceState != null) {
-            // Se recupera el estado del fragment de las preferencias (visible o invisible) tras la destrucción de la actividad
-            prefsVisibles = savedInstanceState.getInt("prefsVisibles");
-        }
-
-        if(prefsVisibles == 0 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            // Si la orientación del dispositivo es de retrato (vertical) y el fragment de las preferencias era invisible, se mantiene invisible
-            preferencias.setVisibility(View.INVISIBLE);
-        }
-        else if(prefsVisibles == 1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            // Si la orientación del dispositivo es de retrato (vertical) y el fragment de las preferencias era visible, se mantiene visible
-            preferencias.setVisibility(View.VISIBLE);
-        }
-        else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            // Si la orientación del dispositivo es apaisada (horizonta), el fragment de las preferencias va a estar siempre visible al crear la actividad
-            preferencias.setVisibility(View.VISIBLE);
-            prefsVisibles = 1;
-        }
-
         // Inicializacion RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
-        gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT){
+            gridLayout = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
+        }
+        else{
+            gridLayout = new GridLayoutManager(this,4,GridLayoutManager.VERTICAL,false); // Los elementos se muestran de forma de tabla de 2 columnas
+        }
         recyclerView.setLayoutManager(gridLayout);
 
         // Obtener las fotos
@@ -220,14 +200,9 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
         }
         else if(id == R.id.preferencias) {
             // Si se ha pulsado en la 'opcionPreferencias', se muestra/oculta el fragment con las preferencias
-            if(prefsVisibles == 0 ){
-                preferencias.setVisibility(View.VISIBLE);
-                prefsVisibles = 1;
-            }
-            else {
-                preferencias.setVisibility(View.INVISIBLE);
-                prefsVisibles = 0;
-            }
+            Intent intent = new Intent(this, PreferenciasActivity.class);
+            intent.putExtra("usuario", usuario);
+            startActivity(intent);
         }
         else if(id == R.id.cerrarSesion) {
             // Si se ha pulsado en la 'opcionCerrarSesion', se crea una nueva actividad 'LoginActivity' y se destruye la actividad actual
@@ -251,22 +226,6 @@ public class MainActivity extends AppCompatActivity implements Preferencias.List
         } else {
             super.onBackPressed();
         }
-    }
-
-    // Método sobrescrito de la interfaz 'Preferencias.ListenerPreferencias' --> Se ejecuta al cambiar la preferencia 'idioma'
-    @Override
-    public void alCambiarIdioma() {
-        // Se destruye la actividad y se vuelve a crear --> Al crearse de nuevo se establecerá la nueva localización en el método 'onCreate'
-        finish();
-        startActivity(getIntent());
-    }
-
-    // Se ejecuta siempre antes de destruirse la actividad
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Se guarda en un Bundle la variable que indica si el fragment de las preferencias estaba visible o invisible
-        outState.putInt("prefsVisibles", prefsVisibles);
     }
 
     @Override

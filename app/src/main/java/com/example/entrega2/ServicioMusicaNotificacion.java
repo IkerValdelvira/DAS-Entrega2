@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,6 +19,7 @@ import androidx.core.app.NotificationCompat;
 import com.example.entrega2.Actividades.AnadirAmigoActivity;
 import com.example.entrega2.Actividades.MainActivity;
 import com.example.entrega2.Actividades.PuntosInteresActivity;
+import com.example.entrega2.Receivers.NotificationDismissedReceiver;
 
 public class ServicioMusicaNotificacion extends Service {
 
@@ -77,7 +77,7 @@ public class ServicioMusicaNotificacion extends Service {
         PendingIntent pendingIntentDismiss = PendingIntent.getBroadcast(this.getApplicationContext(), 0, i4, 0);
 
         // Se definen las características de la notificación
-        builder.setSmallIcon(android.R.drawable.stat_sys_warning)
+        builder.setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.Hola) + " " + usuario + "!!! " + getString(R.string.MantenteActivo))
                 .setVibrate(new long[]{0, 1000, 500, 1000})

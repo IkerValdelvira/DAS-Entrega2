@@ -13,14 +13,12 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,18 +29,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.entrega2.Adaptadores.AdaptadorListViewAnadir;
 import com.example.entrega2.Dialogos.DialogoCrearMarcador;
 import com.example.entrega2.Dialogos.DialogoEliminarMarcador;
 import com.example.entrega2.Dialogos.DialogoPermisosLocalizacion;
 import com.example.entrega2.R;
 import com.example.entrega2.ServicioMusicaNotificacion;
-import com.example.entrega2.Workers.BuscarUsuariosWorker;
 import com.example.entrega2.Workers.EliminarMarcadorWorker;
-import com.example.entrega2.Workers.GetAmigosUsuarioWorker;
 import com.example.entrega2.Workers.GetMarcadoresUsuarioWorker;
 import com.example.entrega2.Workers.InsertarMarcadorWorker;
-import com.example.entrega2.Workers.InsertarUsuarioWorker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -59,8 +53,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -266,6 +258,10 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
         googleMap.animateCamera(actualizar);
     }
 
+    // Obtener ubicacion actual y actualizar camara google maps
+    private FusedLocationProviderClient proveedordelocalizacion;
+    private LocationCallback actualizador;
+
     private void establecerUbicacionActual() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //EL PERMISO NO ESTÁ CONCEDIDO, PEDIRLO
@@ -282,33 +278,38 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         } else {
             //EL PERMISO ESTÁ CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
-            FusedLocationProviderClient proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
-            proveedordelocalizacion.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                double latitud = location.getLatitude();
-                                double longitud = location.getLongitude();
-                                CameraPosition Poscam = new CameraPosition.Builder()
-                                        .target(new LatLng(latitud, longitud))
-                                        .zoom(13)
-                                        .build();
-                                CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
-                                googleMap.animateCamera(actualizar);
-                            } else {
-                                Toast.makeText(contexto, getString(R.string.GeolocalizacionDesconocida), Toast.LENGTH_SHORT).show();
-                                volverAConectar(location);
-                            }
-                        }
-                    })
-                    .addOnFailureListener(this, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(contexto, getString(R.string.NoUbicacion), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            Toast.makeText(this, getString(R.string.ObteniendoGeolocalizacion), Toast.LENGTH_SHORT).show();
+            LocationRequest peticion = LocationRequest.create();
+            peticion.setInterval(1000);
+            peticion.setFastestInterval(5000);
+            peticion.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+            actualizador = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    if (locationResult != null) {
+                        double latitud = locationResult.getLastLocation().getLatitude();
+                        double longitud = locationResult.getLastLocation().getLongitude();
+                        CameraPosition Poscam = new CameraPosition.Builder()
+                                .target(new LatLng(latitud, longitud))
+                                .zoom(13)
+                                .build();
+                        CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
+                        googleMap.animateCamera(actualizar);
+
+                        detenerActualizador();
+                    }
+                }
+            };
+
+            proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
+            proveedordelocalizacion.requestLocationUpdates(peticion, actualizador, null);
         }
+    }
+
+    private void detenerActualizador() {
+        proveedordelocalizacion.removeLocationUpdates(actualizador);
     }
 
     private void getMarcadoresGuardados() {
@@ -477,46 +478,6 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
-
-    // Si no se consigue la ubicacion, se busca cada segundo hasta encontrarla
-    private FusedLocationProviderClient proveedordelocalizacion;
-    private LocationCallback actualizador;
-
-    @SuppressLint("MissingPermission")
-    private void volverAConectar(Location location) {
-        LocationRequest peticion = LocationRequest.create();
-        peticion.setInterval(1000);
-        peticion.setFastestInterval(5000);
-        peticion.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        actualizador = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                if (location != null) {
-                    double latitud = location.getLatitude();
-                    double longitud = location.getLongitude();
-                    CameraPosition Poscam = new CameraPosition.Builder()
-                            .target(new LatLng(latitud, longitud))
-                            .zoom(13)
-                            .build();
-                    CameraUpdate actualizar = CameraUpdateFactory.newCameraPosition(Poscam);
-                    googleMap.animateCamera(actualizar);
-
-                    detenerActualizador();
-                }
-            }
-        };
-
-        proveedordelocalizacion = LocationServices.getFusedLocationProviderClient(this);
-        proveedordelocalizacion.requestLocationUpdates(peticion, actualizador, null);
-
-    }
-
-    private void detenerActualizador() {
-        proveedordelocalizacion.removeLocationUpdates(actualizador);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -527,6 +488,9 @@ public class PuntosInteresActivity  extends FragmentActivity implements OnMapRea
                     // PERMISO CONCEDIDO, EJECUTAR LA FUNCIONALIDAD
                     Intent intent = new Intent(this, PuntosInteresActivity.class);
                     intent.putExtra("usuario", usuario);
+                    intent.putExtra("monumento", monumento);
+                    intent.putExtra("latitud", latitud);
+                    intent.putExtra("longitud", longitud);
                     startActivity(intent);
                     finish();
                 } else {

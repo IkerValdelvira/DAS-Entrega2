@@ -9,21 +9,21 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:layout_marginTop="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/login" />
+        app:srcCompat="@drawable/logo" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewBienvenido"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/app_name"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -32,9 +32,11 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
         android:text="@string/SeleccionarOpcion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewBienvenido" />
 </androidx.constraintlayout.widget.ConstraintLayout>

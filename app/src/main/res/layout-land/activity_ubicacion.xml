@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Actividades.PuntosInteresActivity">
+    tools:context=".Actividades.UbicacionActivity">
 
     <Spinner
-        android:id="@+id/spinnerVista"
+        android:id="@+id/spinnerVistaUbicacion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="20dp"
         android:textAlignment="viewEnd"
         android:theme="@style/CustomStyleParaSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button6"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/PuntosInteresTitulo"
+        android:text="@string/MostrarEditarUbicacion"
         android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -33,41 +33,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <fragment
-        android:id="@+id/fragmentoMapa"
+        android:id="@+id/fragmentoMapaUbicacion"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerVista" />
-
-    <TextView
-        android:id="@+id/textView4"
-        style="@style/CustomStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/Marcadores"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragmentoMapa" />
-
-    <ListView
-        android:id="@+id/listViewMarcadores"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
 
     <TextView
         android:id="@+id/textView5"
@@ -75,9 +52,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="12dp"
         android:text="@string/TipoVista"
+        app:layout_constraintBottom_toBottomOf="@+id/spinnerVistaUbicacion"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toTopOf="@+id/spinnerVistaUbicacion" />
+
+    <Button
+        android:id="@+id/button6"
+        style="@style/CustomStyleParaButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:onClick="onClickGuardar"
+        android:text="@string/Guardar"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/button7"
+        app:layout_constraintEnd_toStartOf="@+id/button7"
+        app:layout_constraintTop_toTopOf="@+id/button7" />
+
+    <Button
+        android:id="@+id/button7"
+        style="@style/CustomStyleParaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:onClick="onClickCancelar"
+        android:text="@string/Cancelar"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinnerVistaUbicacion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spinnerVistaUbicacion" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

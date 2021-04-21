@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Entrega2</string>
+    <string name="app_name">DAS Pictures</string>
     <string name="NombreUsuario">Nombre de usuario...</string>
     <string name="Contraseña">Contraseña...</string>
     <string name="Entrar">Entrar</string>
@@ -51,7 +51,7 @@
     <string name="QueIdioma">¿Qué idioma quieres seleccionar?</string>
     <string name="Idiomas">Idiomas</string>
     <string name="MisAmigos">MIS AMIGOS</string>
-    <string name="MostrarOcultarPreferencias">Mostrar/Ocultar Preferencias</string>
+    <string name="Preferencias">Preferencias</string>
     <string name="PuntosInteres">Puntos de interés</string>
     <string name="PuntosInteresTitulo">PUNTOS DE INTERÉS</string>
     <string name="Marcadores">Marcadores:</string>
@@ -139,5 +139,8 @@
     <string name="configure" translatable="false">Configure</string>
     <string name="add_widget" translatable="false">Add widget</string>
     <string name="MensajeWidget">Introduce las credenciales del usuario con el que crear el widget:</string>
+    <string name="Bienvenido">Bienvenido</string>
+    <string name="SubiendoFoto">Subiendo foto...</string>
+    <string name="ObteniendoGeolocalizacion">Obteniendo geolocalización...</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.example.entrega2;
+package com.example.entrega2.Receivers;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat;
 import com.example.entrega2.Actividades.AnadirAmigoActivity;
 import com.example.entrega2.Actividades.MainActivity;
 import com.example.entrega2.Actividades.PuntosInteresActivity;
+import com.example.entrega2.ServicioMusicaNotificacion;
 
 // BroadcastReceiver que se utiliza para recibir las alarmas cuando se añade una película para 'ver más tarde' en una fecha determinada
 public class AlarmReceiver extends BroadcastReceiver {
