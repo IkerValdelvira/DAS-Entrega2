@@ -16,10 +16,11 @@ import androidx.fragment.app.DialogFragment;
 import com.example.entrega2.R;
 import com.google.android.gms.maps.model.LatLng;
 
-// Diálogo que se muestra antes de crear una nueva lista de favoritos (tras pulsar la opción 'Crear nueva lista' en el diálogo 'DialogoAñadirFavoritos')
-// Diálogo con diseño personalizado para introducir el nombre de la nueva lista a crear
+// Diálogo que se muestra antes de crear una nueva etiqueta para la foto (tras pulsar el botón 'Añadir' en la actividad InfoFotoActivity o SubirFotoActivity)
+// Diálogo con diseño personalizado para introducir la etiqueta a añadir
 public class DialogoCrearEtiqueta extends DialogFragment {
 
+    // Interfaz del listener para que las acciones del diálogo se ejecuten en la actividad que creó el diálogo (InfoFotoActivity o SubirFotoActivity)
     private ListenerdelDialogo miListener;
     public interface ListenerdelDialogo {
         void crearEtiqueta(String etiqueta);
@@ -33,10 +34,10 @@ public class DialogoCrearEtiqueta extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
-        miListener =(ListenerdelDialogo) getActivity();
+        miListener =(ListenerdelDialogo) getActivity();         // Se referencia a la implementación de la actividad
 
-        // Creación del diálogo con diseño personalizado mediante el layout 'anadir_lista_fav.xml'
-        // El usuario introducirá el nombre de la nueva lista de favoritos en un EditText
+        // Creación del diálogo con diseño personalizado mediante el layout 'crear_etiqueta.xml'
+        // El usuario introducirá la etiqueta en un EditText
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.CrearEtiqueta));
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -45,18 +46,18 @@ public class DialogoCrearEtiqueta extends DialogFragment {
 
         EditText editTextEtiqueta = view.findViewById(R.id.ediTextEtiqueta);
 
-        // Se define el botón 'positivo' --> Creará la nueva lista e insertará la película en ella
+        // Se define el botón 'positivo' --> Añadirá la nueva etiqueta a la lista de etiquetas de la foto
         builder.setPositiveButton(getString(R.string.Hecho), new DialogInterface.OnClickListener() {
-            // Se ejeucta al pulsar el botón 'positivo'
+            // Se ejecuta al pulsar el botón 'positivo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String etiqueta = editTextEtiqueta.getText().toString();
                 if(!etiqueta.isEmpty()){
-                    // Si el nombre no está vacío, se crea la lista y se inserta la película en la base de datos local
+                    // Se llama al método 'crearEtiqueta' del listener en la actividad asociada
                     miListener.crearEtiqueta(etiqueta);
                 }
                 else {
-                    // Si el nombre está vacío se vuelve a crear el diálogo
+                    // Si la etiqueta está vacía se vuelve a crear el diálogo
                     Toast.makeText(getActivity(), getString(R.string.RellenarCampos), Toast.LENGTH_SHORT).show();
                     DialogFragment dialogoCrearEtiqueta = new DialogoCrearEtiqueta();
                     dialogoCrearEtiqueta.show(getActivity().getSupportFragmentManager(), "crear_etiqueta");
@@ -67,7 +68,7 @@ public class DialogoCrearEtiqueta extends DialogFragment {
 
         // Se define el botón 'negativo' --> Cancelará el diálogo actual
         builder.setNegativeButton(getString(R.string.Cancelar), new DialogInterface.OnClickListener() {
-            // Se ejeucta al pulsar el botón 'negativo'
+            // Se ejecuta al pulsar el botón 'negativo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {}
         });

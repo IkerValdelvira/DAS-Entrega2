@@ -42,10 +42,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class InfoFotoActivity extends AppCompatActivity implements DialogoCompartirFoto.ListenerdelDialogo, DialogoCrearEtiqueta.ListenerdelDialogo{
+// Actividad que muestra y permite editar la información de la foto seleccionada
+public class InfoFotoActivity extends AppCompatActivity implements DialogoCompartirFoto.ListenerdelDialogo, DialogoCrearEtiqueta.ListenerdelDialogo {
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
+    // Información necesaria para mostrar en la actividad
     private String fotoID;
     private String titulo;
     private String descripcion;
@@ -54,12 +56,14 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
     private String longitud;
     private ArrayList<String> etiquetas;
 
+    // Elementos necesarios del layout 'activity_info_foto.xml'
     private ImageView imageViewFoto;
     private EditText editTextTitulo;
     private EditText editTextDescripcion;
     private TextView textViewFecha;
     private ListView listViewEtiquetas;
 
+    // Se ejecuta al crearse la actividad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,15 +91,19 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
             fotoID = extras.getString("foto");
         }
 
+        // Inicialización de los elementos del layout 'activity_info_foto.xml'
         imageViewFoto = findViewById(R.id.imageViewFotoI);
         editTextTitulo = findViewById(R.id.editTextTituloI);
         textViewFecha = findViewById(R.id.textViewFechaI);
         editTextDescripcion = findViewById(R.id.editTextDescripcionI);
         listViewEtiquetas = findViewById(R.id.listViewEtiquetasI);
 
+        // Listener 'onLongClick' al seleccionar un elemento del ListView con las etiquetas relacionadas con la foto
         listViewEtiquetas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+            // Se ejecuta al pulsar de manera prolongada sobre un elemento de 'listViewEtiquetas'
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+                // Borra la etiqueta seleccionada y actualiza el 'listViewEtiquetas'
                 etiquetas.remove(position);
                 ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(InfoFotoActivity.this, android.R.layout.simple_list_item_1, etiquetas);
                 listViewEtiquetas.setAdapter(adaptadorEtiquetas);
@@ -103,22 +111,28 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
             }
         });
 
-        // Extraer información de la foto de la base de datos
+        // Se obtiene la información de la foto seleccionada
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "getFoto")
                 .putString("username", usuario)
                 .putString("imagen", fotoID)
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'ImagenesWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
 
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se obtienen la imagen, el título, la descripcion, la fecha, la latitud, la longitud y las etiquetas
+                    // de la foto seleccionada, y se muestran el los elementos View de la actividad
                     if (status != null && status.getState().isFinished()) {
                         String result = status.getOutputData().getString("datos");
                         try {
@@ -145,6 +159,7 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                                 listViewEtiquetas.setAdapter(adaptadorEtiquetas);
                             }
 
+                            // Se descarga la imagen del almacenamiento Firebase Cloud Storage y se muestra en un ImageView (mediante la librería Glide)
                             FirebaseStorage storage = FirebaseStorage.getInstance();
                             StorageReference storageRef = storage.getReference();
                             StorageReference pathReference = storageRef.child(fotoID);
@@ -164,24 +179,32 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
+    // Listener 'onClick' del ImageView 'imageViewFoto' del layout 'activity_info_foto.xml'
     public void onClickAmpliar(View v) {
+        // Crea un diálogo encargado de mostrar la imagen en tamaño pantalla completa
         DialogFragment dialogoFotoAmpliada = new DialogoFotoAmpliada(fotoID);
         dialogoFotoAmpliada.show(getSupportFragmentManager(), "ampliar_foto");
     }
 
+    // Listener 'onClick' del botón 'Añadir' del layout 'activity_info_foto.xml'
     public void onClickAñadirEtiqueta(View v) {
+        // Crea un diálogo que recoge la nueva etiqueta escrita por el usuario para la foto
         DialogFragment dialogoCrearEtiqueta = new DialogoCrearEtiqueta();
         dialogoCrearEtiqueta.show(getSupportFragmentManager(), "crear_etiqueta");
     }
 
+    // Método sobrescrito de la interfaz 'DialogoCrearEtiqueta.ListenerdelDialogo' --> Se ejecuta al escribir una etiqueta y aceptar el diálogo para crear una nueva etiqueta en la foto
     @Override
     public void crearEtiqueta(String etiqueta) {
+        // Añade la etiqueta y actualiza el 'listViewEtiquetas'
         etiquetas.add(etiqueta);
         ArrayAdapter adaptadorEtiquetas = new ArrayAdapter<String>(InfoFotoActivity.this, android.R.layout.simple_list_item_1, etiquetas);
         listViewEtiquetas.setAdapter(adaptadorEtiquetas);
     }
 
+    // Listener 'onClick' del botón 'Mostrar/Editar Ubicación' del layout 'activity_info_foto.xml'
     public void onClickUbicacion(View v) {
+        // Abre una actividad UbicacionActivity que muestra una vista GoogleMaps y permite editar la ubicación establecida en la foto
         Intent intent= new Intent(this, UbicacionActivity.class);
         intent.putExtra("titulo", titulo);
         intent.putExtra("latitud", latitud);
@@ -189,17 +212,19 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         startActivityForResult(intent, 666);
     }
 
+    // Metodo encargado de recoger el resultado obtenido de la actividad UbicacionActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // TRATAR EL RESULTADO:
+        // Si el resultado es 'RESULT_OK' se establecen la latitud y longitud de la nueva ubicación
         if (requestCode == 666 && resultCode == RESULT_OK) {
             latitud = data.getStringExtra("latitud");
             longitud = data.getStringExtra("longitud");
         }
-        else if (requestCode == 666 && resultCode == RESULT_CANCELED) {}
     }
 
+    // Listener 'onClick' del botón 'Editar' del layout 'activity_info_foto.xml'
     public void onClickEditar(View v) {
+        // Se obtienen los valores de los datos introducidos por el usuario en la actividad
         titulo = editTextTitulo.getText().toString();
         descripcion = editTextDescripcion.getText().toString();
         String etiquetasString = "";
@@ -208,9 +233,12 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         }
 
         if(titulo.isEmpty()) {
+            // Si el título esta vacío se le informa al usuario
             Toast.makeText(this, getString(R.string.EscribeTitulo), Toast.LENGTH_SHORT).show();
         }
         else {
+            // Se actualizan la información de la foto seleccionada en la base de datos
+            // Información a enviar a la tarea
             Data datos = new Data.Builder()
                     .putString("funcion", "actualizar")
                     .putString("usuario", usuario)
@@ -221,16 +249,21 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                     .putString("longitud", longitud)
                     .putString("etiquetas", etiquetasString)
                     .build();
+            // Restricciones a cumplir: es necesaria la conexión a internet
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
+            // Se ejecuta el trabajo una única vez: 'ImagenesWorker'
             OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
 
+            // Recuperación de los resultados de la tarea
             WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                     .observe(this, status -> {
+                        // En caso de éxito 'Result.success()', se abre una nueva actividad MainActivity, eliminando la actual 'InfoFotoActivity'
+                        // y la anterior 'MainActivity'
                         if (status != null && status.getState().isFinished()) {
                             Toast.makeText(InfoFotoActivity.this, getString(R.string.FotoEditada), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(InfoFotoActivity.this, MainActivity.class);
@@ -245,23 +278,30 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         }
     }
 
+    // Listener 'onClick' del botón 'Eliminar' del layout 'activity_info_foto.xml'
     public void onClickEliminar(View v) {
-        // Eliminar de la base de datos
+        // Se elimina la foto seleccionada de la base de datos
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "eliminar")
                 .putString("usuario", usuario)
                 .putString("imagen", fotoID)
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'ImagenesWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ImagenesWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
 
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se elimina la foto del almacenamiento Firebase Cloud Storage y se abre una nueva
+                    // actividad MainActivity, eliminando la actual 'InfoFotoActivity' y la anterior 'MainActivity'
                     if (status != null && status.getState().isFinished()) {
                         Toast.makeText(InfoFotoActivity.this, getString(R.string.FotoEliminada), Toast.LENGTH_SHORT).show();
 
@@ -285,23 +325,31 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
+    // Listener 'onClick' del botón con icono de compartir del layout 'activity_info_foto.xml'
     public void onClickCompartir(View v) {
+        // Da la opción de compartir la foto con los amigos agregados por el usuario
 
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "getAmigosCompartir")
                 .putString("usuario", usuario)
                 .putString("imagen", fotoID)
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'AmigosWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(AmigosWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
 
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se obtienen los nombres de los amigos del usuario, solo los de los amigos a los que todavía
+                    // no se les ha compartido la foto, y se crea un díalogo a través del que se podrá elegir con qué amigo se quiere compartir la foto
                     if (status != null && status.getState().isFinished()) {
                         String result = status.getOutputData().getString("datos");
                         try {
@@ -330,7 +378,6 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
                                 Toast.makeText(this, getString(R.string.NoAmigosCompartir), Toast.LENGTH_SHORT).show();
                             }
                             else{
-                                // Se crea un diálogo DialogoAñadirFavoritos con las opciones de listas de favoritos para añadir la película actual
                                 DialogFragment dialogoCompartirFoto = new DialogoCompartirFoto(usuario, fotoID, mostrar, titulo);
                                 dialogoCompartirFoto.show(getSupportFragmentManager(), "compartir_foto");
                             }
@@ -343,8 +390,10 @@ public class InfoFotoActivity extends AppCompatActivity implements DialogoCompar
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
+    // Método sobrescrito de la interfaz 'DialogoCompartirFoto.ListenerdelDialogo' --> Se ejecuta al elegir unos amigos y aceptar el diálogo para compartir la foto
     @Override
     public void fotoCompartida() {
+        // Se le informa al usuario de que la foto se ha compartido correctamente
         Toast.makeText(this, getString(R.string.FotoCompartida), Toast.LENGTH_SHORT).show();
     }
 }

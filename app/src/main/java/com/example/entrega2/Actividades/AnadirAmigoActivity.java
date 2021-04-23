@@ -37,7 +37,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorListViewSolicitud.ListenerSolicitud{
+// Actividad que muestra un ListView personalizado con los usuarios no añadidos como amigos o las solicitudes de amistad pendientes (se elige mediante un Spinner)
+public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorListViewSolicitud.ListenerSolicitud {
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
@@ -45,13 +46,15 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
     private Spinner spinner;
     private ArrayAdapter<String> adaptadorSpinner;
 
-    // ListView personalizado para mostrar las películas favoritas de una lista del usuario
+    // ListView personalizado para mostrar los nombres de los usuarios no añadidos como amigos o las solicitudes de amistad pendientes
     private ListView listView;
     private String[] usernames;
 
+    // Elementos necesarios del layout 'activity_anadir_amigo.xml'
     private EditText buscador;
     private Button buscar;
 
+    // Se ejecuta al crearse la actividad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +83,8 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
             if(extras.getString("toUser") != null){
                 usuario = extras.getString("toUser");
             }
+
+            // Si la actividad se ha abierto al pulsar en la acción 'Buscar amigos' de la notificación, se para el servicio asociado y se cancela su notificación
             String desdeServicio = extras.getString("servicio");
             if(desdeServicio != null && desdeServicio.equals("true")) {
                 Intent i = new Intent(this, ServicioMusicaNotificacion.class);
@@ -87,22 +92,24 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
                 NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(extras.getInt("notification_id"));
             }
-            System.out.println("SOLICITUD: " + extras.getBoolean("solicitud"));
+
+            // Si la actividad se ha abierto al pulsar en una notificación informando que se ha recibido una solicitud de amistad
             solicitud = extras.getBoolean("solicitudes");
         }
 
-        // Inicialización de los elementos 'spinner' y 'listView' del layout 'activity_favoritos.xml'
+        // Inicialización de los elementos 'spinner' y 'listView' del layout 'activity_anadir_amigo.xml'
         spinner = findViewById(R.id.spinnerAnadir);
         listView = findViewById(R.id.listViewAnadir);
 
         buscador = findViewById(R.id.editTextBuscar);
         buscar = findViewById(R.id.buttonBuscar);
 
-        // Inicialización el adaptador del spinner con los nombres de las listas de favoritos recibidos de la base de datos
+        // Inicialización el adaptador del spinner con las opciones para mostrar los usuarios no añadidos como amigos o las solicitudes de amistad pendientes
         String[] opciones = {getString(R.string.BuscarAmigos), getString(R.string.SolicitudesPendientes)};
         adaptadorSpinner = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner_selected_layout, opciones);
         adaptadorSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adaptadorSpinner);
+        // Si se ha recibido una solicitud de amistad, se muestran por defecto las solicitudes al abrir la actividad
         if(solicitud){
             spinner.setSelection(1);
         }
@@ -113,18 +120,18 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position == 0) {
-                    // BUSCAR AMIGOS
+                    // Se habilita el buscador de usuarios por nombre
                     buscador.setVisibility(View.VISIBLE);
                     buscar.setVisibility(View.VISIBLE);
 
-                    busquedaPorDefecto();
+                    busquedaPorDefecto();   // Al crear la actividad se muestran todos los usuario no añadidos como amigos
                 }
                 else {
-                    // SOLICITUDES PENDIENTES
+                    // Se deshabilita el buscador de usuarios por nombre
                     buscador.setVisibility(View.INVISIBLE);
                     buscar.setVisibility(View.INVISIBLE);
 
-                    mostrarSolicitudes();
+                    mostrarSolicitudes();   // Se muestran las solicitudes de amistad pendientes
                 }
             }
 
@@ -134,26 +141,34 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
         });
     }
 
+    // Listener 'onClick' del botón 'Buscar' del layout 'activity_anadir_amigo.xml'
     public void onClickBuscar(View v) {
         if(buscador.getText().toString().isEmpty()){
+            // Si el EditText del buscador está vacío, se le informa al usuario mediante un Toast
             Toast.makeText(this, getString(R.string.EscribeBuscador), Toast.LENGTH_SHORT).show();
         }
         else{
+            // Información a enviar a la tarea
             Data datos = new Data.Builder()
                     .putString("funcion", "buscar")
                     .putString("username", usuario)
                     .putString("search", buscador.getText().toString())
                     .build();
+            // Restricciones a cumplir: es necesaria la conexión a internet
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
+            // Se ejecuta el trabajo una única vez: 'UsuariosWorker'
             OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
 
+            // Recuperación de los resultados de la tarea
             WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                     .observe(this, status -> {
+                        // En caso de éxito 'Result.success()', se obtienen los nombres de los usuarios que contienen los caracteres especificados en el EditText del buscador,
+                        // solo si estos usuarios no han sido añadidos todavía como amigos, y se muestran en el 'listView' personalizado
                         if (status != null && status.getState().isFinished()) {
                             String result = status.getOutputData().getString("datos");
                             try {
@@ -205,66 +220,28 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
         }
     }
 
-    private void mostrarSolicitudes() {
-        Data datos = new Data.Builder()
-                .putString("funcion", "buscar")
-                .putString("toUser", usuario)
-                .build();
-        Constraints restricciones = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
-                .setConstraints(restricciones)
-                .setInputData(datos)
-                .build();
-
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
-                .observe(this, status -> {
-                    if (status != null && status.getState().isFinished()) {
-                        String result = status.getOutputData().getString("datos");
-                        try {
-                            JSONArray jsonArray = new JSONArray(result);
-                            usernames = new String[jsonArray.length()];
-                            for(int i = 0; i < jsonArray.length(); i++) {
-                                usernames[i] = jsonArray.getString(i);
-                            }
-                            AdaptadorListViewSolicitud adaptadorListView = new AdaptadorListViewSolicitud(usuario, AnadirAmigoActivity.this, usernames);
-                            listView.setAdapter(adaptadorListView);
-
-                            if(usernames.length == 0) {
-                                Toast.makeText(this, getString(R.string.NoSolicitudes), Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-        WorkManager.getInstance(this).enqueue(otwr);
-    }
-
-
-    @Override
-    public void alCambiar() {
-        mostrarSolicitudes();
-    }
-
+    // Método encargado de obtener y mostrar todos los usuarios no añadidos como amigos
     private void busquedaPorDefecto() {
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "buscarPorDefecto")
                 .putString("username", usuario)
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'UsuariosWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
 
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se obtienen los nombres de todos los usuarios que no han sido añadidos
+                    // todavía como amigos y se muestran en el 'listView' personalizado
                     if (status != null && status.getState().isFinished()) {
                         String result = status.getOutputData().getString("datos");
                         try {
@@ -313,5 +290,58 @@ public class AnadirAmigoActivity extends AppCompatActivity implements AdaptadorL
                 });
 
         WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    // Método encargado de obtener y mostrar las solicitudes de amistad pendientes en el 'listView'
+    private void mostrarSolicitudes() {
+        // Información a enviar a la tarea
+        Data datos = new Data.Builder()
+                .putString("funcion", "buscar")
+                .putString("toUser", usuario)
+                .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        // Se ejecuta el trabajo una única vez: 'SolicitudesWorker'
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
+                .setConstraints(restricciones)
+                .setInputData(datos)
+                .build();
+
+        // Recuperación de los resultados de la tarea
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se obtienen los nombres de los usuarios que han enviado una solicitud de amistad
+                    // y se muestran en el 'listView' personalizado
+                    if (status != null && status.getState().isFinished()) {
+                        String result = status.getOutputData().getString("datos");
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            usernames = new String[jsonArray.length()];
+                            for(int i = 0; i < jsonArray.length(); i++) {
+                                usernames[i] = jsonArray.getString(i);
+                            }
+                            AdaptadorListViewSolicitud adaptadorListView = new AdaptadorListViewSolicitud(usuario, AnadirAmigoActivity.this, usernames);
+                            listView.setAdapter(adaptadorListView);
+
+                            if(usernames.length == 0) {
+                                Toast.makeText(this, getString(R.string.NoSolicitudes), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(this).enqueue(otwr);
+    }
+
+    // Método sobrescrito de la interfaz 'AdaptadorListViewSolicitud.ListenerSolicitud' --> Se ejecuta tras pulsar 'Aceptar' o 'Rechazar' ee un item del 'listView' personalizado con las solicitudes de amistad pendientes
+    @Override
+    public void alCambiar() {
+        // Llama al metodo 'mostrarSolicitudes' para actualizar el 'listView' personalizado
+        mostrarSolicitudes();
     }
 }

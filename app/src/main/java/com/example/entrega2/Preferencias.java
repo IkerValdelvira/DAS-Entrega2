@@ -8,7 +8,7 @@ import androidx.preference.PreferenceFragmentCompat;
 // Fragment encargado de gestionar las preferencias del usuario de la aplicacion a través de la clase SharedPreferences
 public class Preferencias extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    // Interfaz del listener para que los cambios de las preferencias tengan efecto en la actividad desde donde se han cambiado (MainActivity)
+    // Interfaz del listener para que los cambios de las preferencias tengan efecto en la actividad desde donde se han cambiado (PreferenciasActivity)
     ListenerPreferencias miListener;
     public interface ListenerPreferencias {
         void alCambiarIdioma();

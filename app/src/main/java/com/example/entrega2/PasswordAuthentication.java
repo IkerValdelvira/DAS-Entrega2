@@ -8,7 +8,9 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-// https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+// Clase utilizada para hashear las contraseñas de los usuarios y validarlas antes de enviar la información al servicio web PHP
+// Se usa el algoritmo PBKDF2WithHmacSHA1
+// Fuente: https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
 public final class PasswordAuthentication  {
 
     public static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException

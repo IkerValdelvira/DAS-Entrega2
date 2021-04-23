@@ -24,14 +24,16 @@ import org.json.JSONException;
 
 import java.util.Locale;
 
-public class AmigosActivity extends AppCompatActivity implements AdaptadorListViewAmigos.ListenerSolicitud{
+// Actividad que muestra un ListView personalizado con los nombres de los amigos del usuario y da la opción de eliminarlos.
+public class AmigosActivity extends AppCompatActivity implements AdaptadorListViewAmigos.ListenerSolicitud {
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
 
-    // ListView personalizado para mostrar las películas favoritas de una lista del usuario
+    // ListView personalizado para mostrar los nombres de los amigos del usuario
     private ListView listView;
     private String[] usernames;
 
+    // Se ejecuta al crearse la actividad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,27 +60,33 @@ public class AmigosActivity extends AppCompatActivity implements AdaptadorListVi
             usuario = extras.getString("usuario");
         }
 
+        // Inicialización del elemento 'listView' del layout 'activity_amigos.xml'
         listView = findViewById(R.id.listViewAmigos);
 
         mostrarAmigos();
-
     }
 
+    // Método encargado de obtener los nombres de los amigos del usuario y mostrarlos en el 'listView' personalizado
     private void mostrarAmigos() {
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "getAmigos")
                 .putString("username", usuario)
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'AmigosWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(AmigosWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
 
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se obtienen los nombres de los amigos del usuario y se muestran en el 'listView' personalizado
                     if (status != null && status.getState().isFinished()) {
                         String result = status.getOutputData().getString("datos");
                         try {
@@ -103,8 +111,10 @@ public class AmigosActivity extends AppCompatActivity implements AdaptadorListVi
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
+    // Método sobrescrito de la interfaz 'AdaptadorListViewAmigos.ListenerSolicitud' --> Se ejecuta tras eliminar un amigo mediante el botón 'Eliminar' de un item del 'listView' personalizado
     @Override
     public void alEliminar() {
+        // Llama al metodo 'mostarAmigos' para actualizar el 'listView' personalizado
         mostrarAmigos();
     }
 }

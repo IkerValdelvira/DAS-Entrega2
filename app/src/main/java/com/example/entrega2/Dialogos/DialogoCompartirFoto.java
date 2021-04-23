@@ -20,22 +20,23 @@ import com.example.entrega2.Workers.CompartidasWorker;
 
 import java.util.ArrayList;
 
-// Diálogo que se muestra antes de añadir una película a una lista de favoritos (tras pulsar el botón 'Añadir a favoritos' de la actividad 'PeliculaActivity')
-// Diálogo con listado de opciónes para añadir la película a una lista ya creada o a una nueva lista a crear
+// Diálogo que se muestra antes de compartir una foto (tras pulsar el botón de compartir de la actividad InfoFotoActivity)
+// Diálogo con listado de opciónes para añadir compartir la foto con uno o más amigos
 public class DialogoCompartirFoto extends DialogFragment {
 
+    // Interfaz del listener para que las acciones del diálogo se ejecuten en la actividad que creó el diálogo (InfoFotoActivity)
     private ListenerdelDialogo miListener;
     public interface ListenerdelDialogo {
         void fotoCompartida();
     }
 
-    // Datos de la película y el usuario que se van a utilizar en el diálogo
+    // Datos de la usuario y la imagen que se van a utilizar en el diálogo
     private String usuario;
     private String fotoID;
     private ArrayList<String> amigos;
     private String titulo;
 
-    private String[] opciones;                  // Array con las opciones de listas de favoritos
+    private String[] opciones;                  // Array con los amigos a los que compartir la foto
     private ArrayList<String> elegidos;         // Array para almacenar las opciones elegidas
 
     // Constructor del diálogo
@@ -54,9 +55,9 @@ public class DialogoCompartirFoto extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
-        miListener = (ListenerdelDialogo) getActivity();
+        miListener = (ListenerdelDialogo) getActivity();        // Se referencia a la implementación de la actividad
 
-        // Creación del listado de opciones --> Las listas de favoritos disponibles se obtienen de la base de datos local y se guardan el el Array 'opciones'
+        // Creación del diálogo --> Se establecen los amigos a los que compartir la foto en el listado
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.ConQuien));
 
@@ -82,18 +83,18 @@ public class DialogoCompartirFoto extends DialogFragment {
             }
         });
 
-        // Se define el botón 'positivo' --> Añadirá la película a las listas seleccionadas entre las opciones
+        // Se define el botón 'positivo' --> Enviará un mensaje (notificación) a los amigos elegidos de la lista
         builder.setPositiveButton(getString(R.string.Aceptar), new DialogInterface.OnClickListener() {
             // Se ejeucta al pulsar el botón 'positivo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // Se itera por cada opción (lista de favoritos) seleccionada
+                // Se itera por cada opción seleccionada y se añade el usuario al array de elegidos
                 String[] elegidosArray = new String[elegidos.size()];
                 for(int j=0; j<elegidos.size(); j++) {
-                    // Compartir con amigo
                     elegidosArray[j] = elegidos.get(j);
                 }
 
+                // Información a enviar a la tarea
                 Data datos = new Data.Builder()
                         .putString("funcion", "compartir")
                         .putString("usuario", usuario)
@@ -101,16 +102,20 @@ public class DialogoCompartirFoto extends DialogFragment {
                         .putString("titulo", titulo)
                         .putStringArray("amigos", elegidosArray)
                         .build();
+                // Restricciones a cumplir: es necesaria la conexión a internet
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
+                // Se ejecuta el trabajo una única vez: 'CompartidasWorker'
                 OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(CompartidasWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();
 
+                // Recuperación de los resultados de la tarea
                 WorkManager.getInstance(getActivity()).getWorkInfoByIdLiveData(otwr.getId())
                         .observe(getActivity(), status -> {
+                            // En caso de éxito 'Result.success()', se llama al método 'fotoCompartida' del listener para ejecutar la acción en la actividad
                             if (status != null && status.getState().isFinished()) {
                                 miListener.fotoCompartida();
                             }

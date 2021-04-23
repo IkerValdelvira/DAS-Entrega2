@@ -145,5 +145,6 @@
     <string name="Cambiar">Change</string>
     <string name="AbrirCamara">Open Camera</string>
     <string name="AbrirGaleria">Open Gallery</string>
+    <string name="EtiquetadoFallido">Automatic labeling has failed.</string>
 
 </resources>

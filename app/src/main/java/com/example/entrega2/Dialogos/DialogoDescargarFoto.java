@@ -15,8 +15,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+// Diálogo que se muestra antes de descargar una foto al almacenamiento local del dispositivo (tras pulsar prolongadamente en un elemento del RecyclerView de la actividad MainActivity)
+// Diálogo tipo alerta
 public class DialogoDescargarFoto extends DialogFragment {
 
+    // Interfaz del listener para que las acciones del diálogo se ejecuten en la actividad que creó el diálogo (MainActivity)
     private ListenerdelDialogo miListener;
     public interface ListenerdelDialogo {
         void descargarFoto(Uri uri);
@@ -28,6 +31,7 @@ public class DialogoDescargarFoto extends DialogFragment {
         this.imagen = pImagen;
     }
 
+    // Se ejecuta al crearse el diálogo
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -35,29 +39,35 @@ public class DialogoDescargarFoto extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
-        miListener = (ListenerdelDialogo) getActivity();
+        miListener = (ListenerdelDialogo) getActivity();            // Se referencia a la implementación de la actividad
 
+        // Creación del diálogo tipo alerta
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.DescargarFoto));
         builder.setMessage(getString(R.string.SeguroDescargar));
 
+        // Se define el botón 'positivo' --> Descargará la imagen al almacenamiento local del dispositivo
         builder.setPositiveButton(getString(R.string.Si), new DialogInterface.OnClickListener() {
+            // Se ejecuta al pulsar el botón 'positivo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                // Se descarga la imagen del almacenamiento Firebase Cloud Storage y se llama al método 'descargarFoto' del listener en la actividad asociada
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReference();
                 StorageReference pathReference = storageRef.child(imagen);
                 pathReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        // Descargar imagen
+                        // Se llama al método 'descargarFoto' del listener en la actividad asociada
                         miListener.descargarFoto(uri);
                     }
                 });
             }
         });
 
+        // Se define el botón 'negativo' --> Cancelará el diálogo actual
         builder.setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {
+            // Se ejecuta al pulsar el botón 'negativo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {}
         });

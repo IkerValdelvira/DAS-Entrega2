@@ -30,9 +30,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Locale;
 import java.util.Random;
 
-/**
- * The configuration screen for the {@link MonumentosWidget MonumentosWidget} AppWidget.
- */
+// Actividad encargada de pedir login al usuario para crear una instancia del widget
 public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "com.example.entrega2.Widgets.MonumentosWidget";
@@ -43,16 +41,16 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         super();
     }
 
-    // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
+    // Guarda el nombre de usuario en las preferencias para las instancia del widget
+    static void saveUserPref(Context context, int appWidgetId, String usuario) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
+        prefs.putString(PREF_PREFIX_KEY + appWidgetId, usuario);
         prefs.apply();
     }
 
-    // Crea la alarma asociada al widget y escribe en las preferencias el numero del PendingIntent asociado a la alarma
+    // Crea la alarma asociada al widget y escribe en las preferencias el número del PendingIntent asociado a la alarma
     static void createAlarmPref(Context context, int appWidgetId, String usuario) {
-        // Enter relevant functionality for when the first widget is created
+        // La alarma se ejecutara cada 30 segundos y mandará un aviso broadcast a WidgetReceiver para actualizar la instancia del widget
         AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, WidgetReceiver.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -62,30 +60,31 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         PendingIntent pi = PendingIntent.getBroadcast(context, num, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 30000, 30000 , pi);
 
+        // Guarda el número del PendingIntent asociado a la alarma en las preferencias
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.putInt(PREF_PREFIX_KEY + appWidgetId + "_alarm", num);
         prefs.apply();
     }
 
-    // Read the prefix from the SharedPreferences object for this widget.
-    // If there is no preference saved, get the default from a resource
-    static String loadTitlePref(Context context, int appWidgetId) {
+    // Lee el nombre de usuario asociado a la instancia del widget de las preferencias
+    static String loadUserPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (titleValue != null) {
-            return titleValue;
+        String user = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+        if (user != null) {
+            return user;
         } else {
             return context.getString(R.string.appwidget_text);
         }
     }
 
-    static void deleteTitlePref(Context context, int appWidgetId) {
+    // Elimina el nombre de usuario asociado a la instancia del widget de las preferencias
+    static void deleteUserPref(Context context, int appWidgetId) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
         prefs.remove(PREF_PREFIX_KEY + appWidgetId);
         prefs.apply();
     }
 
-    // Elimina de la alarma asociada al widget y elimina de las preferencias el numero del PendingIntent asociado a la alarma
+    // Elimina de la alarma asociada al widget y elimina de las preferencias el número del PendingIntent asociado a la alarma
     static void deleteAlarmPref(Context context, int appWidgetId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         int num = prefs.getInt(PREF_PREFIX_KEY + appWidgetId + "_alarm", 0);
@@ -99,12 +98,12 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         prefs2.apply();
     }
 
+    // Se ejecuta al crearse la actividad
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        // Set the result to CANCELED.  This will cause the widget host to cancel
-        // out of the widget placement if the user presses the back button.
+        // No añade el widget al escritorio en un principio, para evitar que se añada el widget si el usuario cancela/pulsa Back
         setResult(RESULT_CANCELED);
 
         // Acceso al las preferencias para obtener el valor de 'idioma'
@@ -123,7 +122,7 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
 
         setContentView(R.layout.monumentos_widget_configure);
 
-        // Find the widget id from the intent.
+        // Se obtiene el ID del widget del Intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -131,13 +130,14 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
-        // If this activity was started with an intent without an app widget ID, finish with an error.
+        // Si la actividad se ha iniciado con un Intent sin el ID del widget, se destruye
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
             return;
         }
     }
 
+    // Listener 'onClick' del botón 'Añadir' del layout 'monumentos_widget_configure.xml'
     public void onClickAnadir(View v) {
         EditText editTextUsuario = findViewById(R.id.editTextUsuarioW);
         EditText editTextContrasena = findViewById(R.id.editTextContraseñaW);
@@ -148,39 +148,48 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         if(usuario.isEmpty() || contrasena.isEmpty()) {
             Toast.makeText(this, getString(R.string.RellenarCampos), Toast.LENGTH_SHORT).show();
         }
-        // Se comprueba que el usuario existe en la base de datos local
+        // Se comprueba que el nombre del usuario existe en la base de datos
         else {
+            // Información a enviar a la tarea
             Data datos = new Data.Builder()
                     .putString("funcion", "validar")
                     .putString("username", usuario)
                     .build();
+            // Restricciones a cumplir: es necesaria la conexión a internet
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
+            // Se ejecuta el trabajo una única vez: 'UsuariosWorker'
             OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
 
+            // Recuperación de los resultados de la tarea
             WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                     .observe(this, status -> {
+                        // En caso de éxito 'Result.success()', se comprueba si el hash que se ha devuelto de la base de datos
+                        // pertenece a la contraseña que ha introducido el usuari
                         if (status != null && status.getState().isFinished()) {
                             String hash = status.getOutputData().getString("resultado");
                             try {
+                                // Si el usuario no existe el hash devuelto está vacío
                                 if (hash.isEmpty()){
                                     Toast.makeText(this, getString(R.string.UserPassIncorrectos), Toast.LENGTH_SHORT).show();
                                 }
+                                // Si el hash pertenece a la contraseña
                                 else if(PasswordAuthentication.validatePassword(contrasena, hash)) {
-                                    // When the button is clicked, store the string locally
-                                    saveTitlePref(this, mAppWidgetId, usuario);
+                                    // Se guarda el usuario asociado al widget en las preferencias
+                                    saveUserPref(this, mAppWidgetId, usuario);
 
+                                    // Se crea la alarma asociada al widget para actualizarlo cada 30 segundos
                                     createAlarmPref(this, mAppWidgetId, usuario);
 
-                                    // It is the responsibility of the configuration activity to update the app widget
+                                    // Se actualiza la instancia del widget
                                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                                     MonumentosWidget.updateAppWidget(this, appWidgetManager, mAppWidgetId);
 
-                                    // Make sure we pass back the original appWidgetId
+                                    // Se crear un Intent para devolver el resultado con la instancia del widget y se destruye la actividad
                                     Intent resultValue = new Intent();
                                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                                     setResult(RESULT_OK, resultValue);
@@ -201,7 +210,9 @@ public class MonumentosWidgetConfigureActivity extends AppCompatActivity {
         }
     }
 
+    // Listener 'onClick' del botón 'Cancelar' del layout 'monumentos_widget_configure.xml'
     public void onClickCancelar(View v) {
+        // Se destruye la actividad sin crear la instancia del widget
         finish();
     }
 }

@@ -33,8 +33,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-// Diálogo que se muestra antes de crear una nueva lista de favoritos (tras pulsar la opción 'Crear nueva lista' en el diálogo 'DialogoAñadirFavoritos')
-// Diálogo con diseño personalizado para introducir el nombre de la nueva lista a crear
+// Diálogo que se muestra para visualizar una foto en tamaño pantalla completa (tras pulsar en el ImageView con la foto en la activiad 'InfoFotoActivity')
+// Diálogo con diseño personalizado para mostar la imagen en un ImageView en tamaño pantalla completa
 public class DialogoFotoAmpliada extends DialogFragment {
 
     private String imagen;
@@ -51,8 +51,7 @@ public class DialogoFotoAmpliada extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
-        // Creación del diálogo con diseño personalizado mediante el layout 'anadir_lista_fav.xml'
-        // El usuario introducirá el nombre de la nueva lista de favoritos en un EditText
+        // Creación del diálogo con diseño personalizado mediante el layout 'foto_ampliada.xml'
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.foto_ampliada,null);
@@ -60,6 +59,7 @@ public class DialogoFotoAmpliada extends DialogFragment {
 
         ImageView imageViewFotoAmpliada = view.findViewById(R.id.imageViewFotoAmpliada);
 
+        // Se descarga la imagen del almacenamiento Firebase Cloud Storage y se carga en el ImageView
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         StorageReference pathReference = storageRef.child(imagen);

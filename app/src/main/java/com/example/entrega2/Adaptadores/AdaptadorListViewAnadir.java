@@ -21,11 +21,11 @@ import com.example.entrega2.Workers.SolicitudesWorker;
 
 import java.util.ArrayList;
 
-// Adaptador para la ListView personalizada de las peliculas favoritas
+// Adaptador para el ListView personalizado de los amigos posibles para añadir de un usuario en la actividad AnadirAmigoActivity
 public class AdaptadorListViewAnadir extends BaseAdapter{
 
-    private AnadirAmigoActivity contexto;         // Contexto de la actividad que va a mostrar el ListView personalizado: FavoritosActivity
-    private LayoutInflater inflater;            // Inflater para el layout que represente una fila de la lista
+    private AnadirAmigoActivity contexto;           // Contexto de la actividad que va a mostrar el ListView personalizado: AnadirAmigoActivity
+    private LayoutInflater inflater;                // Inflater para el layout que represente una fila de la lista
 
     // Datos que se quieren mostrar
     private String[] usernames;
@@ -64,33 +64,37 @@ public class AdaptadorListViewAnadir extends BaseAdapter{
     // Método sobrescrito de la clase BaseAdapter --> Devuelve cómo se visualiza un elemento
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = inflater.inflate(R.layout.fila_anadir,null);      // Se indica el layout para cada elemento: 'fila_favoritos.xml'
+        view = inflater.inflate(R.layout.fila_anadir,null);      // Se indica el layout para cada elemento: 'fila_anadir.xml'
         // Se obtienen los elementos del layout
         TextView textViewUsername = (TextView) view.findViewById(R.id.textViewUsername);
         Button botonMandarSolicitud = (Button) view.findViewById(R.id.buttonMandarSolicitud);
-        // Listener 'onClick' del botón del layout para quitar la película de la lista de favoritos
+        // Listener 'onClick' del botón 'Enviar solicitud' del layout 'fila_anadir.xml'
         botonMandarSolicitud.setOnClickListener(new View.OnClickListener() {
-            // Se ejecuta al pulsar el botón del layout para quitar la película de la lista de favoritos
+            // Se ejecuta al pulsar el botón 'Enviar solicitud'
             @Override
             public void onClick(View v) {
-                // Se crea un diálogo preguntando si se quiere quitar realmente la película de la lista de favoritos seleccionada: DialogoQuitarFavoritos
+                // Se envia una solicitud de amistad (notificación) al usuario y se guarda en la base de datos
                 String username = usernames[i];
-                // ENVIAR SOLICITUD
+                // Información a enviar a la tarea
                 Data datos = new Data.Builder()
                         .putString("funcion", "enviar")
                         .putString("from", usuario)
                         .putString("to", username)
                         .build();
+                // Restricciones a cumplir: es necesaria la conexión a internet
                 Constraints restricciones = new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build();
+                // Se ejecuta el trabajo una única vez: 'SolicitudesWorker'
                 OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(SolicitudesWorker.class)
                         .setConstraints(restricciones)
                         .setInputData(datos)
                         .build();
 
+                // Recuperación de los resultados de la tarea
                 WorkManager.getInstance(contexto).getWorkInfoByIdLiveData(otwr.getId())
                         .observe(contexto, status -> {
+                            // En caso de éxito 'Result.success()', se desactiva el botón 'Enviar solicitud' para ese usuario
                             if (status != null && status.getState().isFinished()) {
                                 Toast.makeText(contexto, contexto.getString(R.string.SolicitudEnviada), Toast.LENGTH_SHORT).show();
                                 botonMandarSolicitud.setAlpha(.5f);
@@ -100,13 +104,15 @@ public class AdaptadorListViewAnadir extends BaseAdapter{
             }
         });
 
-        // Se asigna a cada variable el contenido que se quiere mostrar en ese elemento: título y portada de la película
+        // Se asigna a cada variable el contenido que se quiere mostrar en ese elemento: nombre de usuario
         textViewUsername.setText(usernames[i]);
 
+        // Se desactivan los botones 'Enviar solicitud' de los usuarios a los que ya se les ha enviado una solicitud anteriormente
         if(solicitados.contains(usernames[i])) {
             botonMandarSolicitud.setAlpha(.5f);
             botonMandarSolicitud.setEnabled(false);
         }
+
         return view;
     }
 

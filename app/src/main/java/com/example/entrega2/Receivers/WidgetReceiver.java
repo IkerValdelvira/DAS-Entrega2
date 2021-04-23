@@ -16,46 +16,23 @@ import com.example.entrega2.Widgets.MonumentosWidgetConfigureActivity;
 
 import java.util.Random;
 
+// BroadcastReceiver que se utiliza para recibir la alarma cada 30 segundos al crear un widget y que se encarga de actualizarlo
 public class WidgetReceiver extends BroadcastReceiver {
 
+    // Se ejecuta al recibir un aviso de mensaje de broadcast
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("RECEIVER 30 SEGUNDOS");
-        /*
+        // Se obtienen los elementos del widget
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.monumentos_widget);
 
-        // Elegir monumento aleatorio
+        // Se elige un monumento de forma aleatoria y se escribe en el TextView del widget
         String monumento = MonumentosWidget.getMonumento(context);
         String nombreMonumento = monumento.split(" --> ")[0];
         double latitud = Double.parseDouble(monumento.split(" --> ")[1].split(";")[0]);
         double longitud = Double.parseDouble(monumento.split(" --> ")[1].split(";")[1]);
         remoteViews.setTextViewText(R.id.textViewMonumentoW, nombreMonumento);
 
-        // Boton marcar monumento
-        Intent intentMarcar = new Intent(context, PuntosInteresActivity.class);
-        intentMarcar.putExtra("usuario", intent.getStringExtra("usuario"));
-        intentMarcar.putExtra("monumento", nombreMonumento);
-        intentMarcar.putExtra("latitud", latitud);
-        intentMarcar.putExtra("longitud", longitud);
-        PendingIntent pendingIntentMarcar = PendingIntent.getActivity(context,
-                1000, intentMarcar, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.buttonMarcarW, pendingIntentMarcar);
-
-        ComponentName tipowidget = new ComponentName(context, MonumentosWidget.class);
-        AppWidgetManager manager = AppWidgetManager.getInstance(context);
-        manager.updateAppWidget(tipowidget, remoteViews);
-        */
-
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.monumentos_widget);
-
-        // Elegir monumento aleatorio
-        String monumento = MonumentosWidget.getMonumento(context);
-        String nombreMonumento = monumento.split(" --> ")[0];
-        double latitud = Double.parseDouble(monumento.split(" --> ")[1].split(";")[0]);
-        double longitud = Double.parseDouble(monumento.split(" --> ")[1].split(";")[1]);
-        remoteViews.setTextViewText(R.id.textViewMonumentoW, nombreMonumento);
-
-        // Boton marcar monumento
+        // Se actualiza el PendingIntent del botón 'Marcar' del widget para que abra una actividad PuntosInteresActivity con la localización nuevo monumento
         Intent intentMarcar = new Intent(context, PuntosInteresActivity.class);
         intentMarcar.putExtra("usuario", intent.getStringExtra("usuario"));
         intentMarcar.putExtra("monumento", nombreMonumento);
@@ -67,6 +44,7 @@ public class WidgetReceiver extends BroadcastReceiver {
                 num, intentMarcar, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.buttonMarcarW, pendingIntentMarcar);
 
+        // Se obtiene el ID la instancia del widget que ha mandado el aviso broadcast y se actualizan sus elementos
         int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
         AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);

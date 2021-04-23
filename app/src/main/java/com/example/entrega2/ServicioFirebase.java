@@ -15,6 +15,7 @@ import com.example.entrega2.Actividades.CompartidasActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+// Servicio encargado de recibir los mensajes FCM (Firebase Cloud Messaging)
 public class ServicioFirebase extends FirebaseMessagingService {
 
     private String from;
@@ -24,7 +25,9 @@ public class ServicioFirebase extends FirebaseMessagingService {
 
     public ServicioFirebase(){}
 
+    // Método que se ejecuta al recivir un mensaje FCM cuando la aplicación está en ejecución (no se ejecuta si está en background)
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        // Si el mensaje FCM viene con datos, se recogen y se guardan en las variables
         if (remoteMessage.getData().size() > 0) {
             from = remoteMessage.getData().get("fromUser");
             to = remoteMessage.getData().get("toUser");
@@ -32,7 +35,9 @@ public class ServicioFirebase extends FirebaseMessagingService {
             comentario = remoteMessage.getData().get("comentario");
         }
 
+        // Si el mensaje FCM es una notificación
         if (remoteMessage.getNotification() != null) {
+            // Creación del canal de notificaciones
             NotificationManager elManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationCompat.Builder elBuilder = new NotificationCompat.Builder(this, "Notificaciones");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -46,6 +51,7 @@ public class ServicioFirebase extends FirebaseMessagingService {
                 elManager.createNotificationChannel(elCanal);
             }
 
+            // Si la acción de la notificación FCM es 'SOLICITUD', se crea una notificación que abrirá la actividad 'AnadirAmigoActivity' con los datos recibidos
             if(remoteMessage.getNotification().getClickAction().equals("SOLICITUD")) {
                 Intent i = new Intent(this, AnadirAmigoActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -62,6 +68,7 @@ public class ServicioFirebase extends FirebaseMessagingService {
                         .setContentIntent(intentEnNot);
             }
 
+            // Si la acción de la notificación FCM es 'COMENTARIO', se crea una notificación mostrando los datos recibidos
             else if(remoteMessage.getNotification().getClickAction().equals("COMENTARIO")) {
                 elBuilder.setSmallIcon(android.R.drawable.ic_menu_send)
                         .setContentTitle(to + ", " + from + " " + getString(R.string.HaComentado) + " " + titulo)
@@ -71,6 +78,7 @@ public class ServicioFirebase extends FirebaseMessagingService {
                         .setAutoCancel(true);
             }
 
+            // Si la acción de la notificación FCM es 'COMPARTIDA', se crea una notificación que abrirá la actividad 'CompartidasActivity' con los datos recibidos
             else if(remoteMessage.getNotification().getClickAction().equals("COMPARTIDA")) {
                 Intent i = new Intent(this, CompartidasActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

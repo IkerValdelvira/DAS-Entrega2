@@ -15,10 +15,11 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.entrega2.R;
 
-// Diálogo que se muestra antes de crear una nueva lista de favoritos (tras pulsar la opción 'Crear nueva lista' en el diálogo 'DialogoAñadirFavoritos')
-// Diálogo con diseño personalizado para introducir el nombre de la nueva lista a crear
+// Diálogo que se muestra antes de enviar un comentario a un usuario en una foto (tras pulsar en un elemento del RecyclerView de la actividad CompartidasActivity)
+// Diálogo con diseño personalizado para introducir el comentario
 public class DialogoEnviarComentario extends DialogFragment {
 
+    // Interfaz del listener para que las acciones del diálogo se ejecuten en la actividad que creó el diálogo (CompartidasActivity)
     private ListenerdelDialogo miListener;
     public interface ListenerdelDialogo {
         void enviarComentario(String amigo, String titulo, String comentario);
@@ -40,10 +41,10 @@ public class DialogoEnviarComentario extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
-        miListener =(ListenerdelDialogo) getActivity();
+        miListener =(ListenerdelDialogo) getActivity();             // Se referencia a la implementación de la actividad
 
-        // Creación del diálogo con diseño personalizado mediante el layout 'anadir_lista_fav.xml'
-        // El usuario introducirá el nombre de la nueva lista de favoritos en un EditText
+        // Creación del diálogo con diseño personalizado mediante el layout 'comentar_foto.xml'
+        // El usuario introducirá el comentario en un EditText
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.ComentarFoto));
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -52,18 +53,18 @@ public class DialogoEnviarComentario extends DialogFragment {
 
         EditText editTextComentario = view.findViewById(R.id.editTextComentario);
 
-        // Se define el botón 'positivo' --> Creará la nueva lista e insertará la película en ella
+        // Se define el botón 'positivo' --> Enviará el comentario (notificación) al usuario propietario de la foto compartida
         builder.setPositiveButton(getString(R.string.Hecho), new DialogInterface.OnClickListener() {
-            // Se ejeucta al pulsar el botón 'positivo'
+            // Se ejecuta al pulsar el botón 'positivo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String comentario = editTextComentario.getText().toString();
                 if(!comentario.isEmpty()){
-                    // Si el nombre no está vacío, se crea la lista y se inserta la película en la base de datos local
+                    // Se llama al método 'enviarComentario' del listener en la actividad asociada
                     miListener.enviarComentario(amigo, titulo, comentario);
                 }
                 else {
-                    // Si el nombre está vacío se vuelve a crear el diálogo
+                    // Si el comentario está vacío se vuelve a crear el diálogo
                     Toast.makeText(getActivity(), getString(R.string.RellenarCampos), Toast.LENGTH_SHORT).show();
                     DialogFragment dialogoEnviarComentario = new DialogoEnviarComentario(amigo, titulo);
                     dialogoEnviarComentario.show(getActivity().getSupportFragmentManager(), "enviar_comentario");
@@ -74,7 +75,7 @@ public class DialogoEnviarComentario extends DialogFragment {
 
         // Se define el botón 'negativo' --> Cancelará el diálogo actual
         builder.setNegativeButton(getString(R.string.Cancelar), new DialogInterface.OnClickListener() {
-            // Se ejeucta al pulsar el botón 'negativo'
+            // Se ejecuta al pulsar el botón 'negativo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {}
         });

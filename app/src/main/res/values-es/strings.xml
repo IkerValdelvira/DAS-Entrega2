@@ -145,5 +145,6 @@
     <string name="Cambiar">Cambiar</string>
     <string name="AbrirCamara">Abrir Cámara</string>
     <string name="AbrirGaleria">Abrir Galería</string>
+    <string name="EtiquetadoFallido">El etiquetado automático ha fallado.</string>
 
 </resources>

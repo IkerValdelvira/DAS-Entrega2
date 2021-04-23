@@ -22,7 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-// Adaptador para el RecyclerView del catálogo de películas
+// Adaptador para el RecyclerView de fotos propias del usuario en la actividad MainActivity
 public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMisFotos> {
 
     // Datos que se quieren mostrar
@@ -32,7 +32,7 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
 
     private String usuario;                     // Nombre de usuario actual
 
-    private MainActivity contexto;
+    private MainActivity contexto;              // Contexto de la actividad que va a mostrar el ListView personalizado: MainActivity
 
     // Constructor del adaptador
     public AdaptadorRecyclerMisFotos(MainActivity pContexto, String pUsuario, String[] pIds, String[] pTitulos) {
@@ -43,7 +43,7 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
         seleccionados = new boolean[titulos.length];
     }
 
-    // 'Infla' el layout definido para cada elemento (item_layout.xml) y crea y devuelve una instancia de ViewHolder
+    // 'Infla' el layout definido para cada elemento (item_layout_mis_fotos.xml) y crea y devuelve una instancia de ViewHolder
     @NonNull
     @Override
     public ViewHolderMisFotos onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,6 +60,7 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
         holder.id = ids[position];
         holder.titulo.setText(titulos[position]);
 
+        // Se descarga la imagen del almacenamiento Firebase Cloud Storage y se muestra en el ImageView
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         StorageReference pathReference = storageRef.child(ids[position]);
@@ -72,9 +73,10 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
 
         // Listener 'onClick' para cada View
         holder.itemView.setOnClickListener(new View.OnClickListener() {
-            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una película)
+            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una foto)
             @Override
             public void onClick(View view) {
+                // Se abre una nueva actividad InfoFotoActivity correspondiente a la foto seleccionada
                 Intent intent = new Intent(contexto, InfoFotoActivity.class);
                 intent.putExtra("usuario", usuario);
                 intent.putExtra("foto", holder.id);
@@ -82,11 +84,12 @@ public class AdaptadorRecyclerMisFotos extends RecyclerView.Adapter<ViewHolderMi
             }
         });
 
-        // Listener 'onClick' para cada View
+        // Listener 'onLongClick' para cada View
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una película)
+            // Se ejecuta al pulsar prolongadamente en un itemView (cuando se pulsa prolongadamente en un CardView que contiene la información de una foto)
             @Override
             public boolean onLongClick(View view) {
+                // Se crea un diálogo DialogoDescargarFoto para confirmar que el usuario quiere descargar la imagen al almacenamiento local del dispositivo
                 DialogFragment dialogoDescargarFoto = new DialogoDescargarFoto(holder.id);
                 dialogoDescargarFoto.show(contexto.getSupportFragmentManager(), "descargar_foto");
                 return false;

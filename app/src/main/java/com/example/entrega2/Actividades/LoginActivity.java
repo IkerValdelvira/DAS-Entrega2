@@ -24,7 +24,7 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.entrega2.Receivers.AlarmReceiver;
+import com.example.entrega2.Receivers.NotificationAlarmReceiver;
 import com.example.entrega2.PasswordAuthentication;
 import com.example.entrega2.R;
 import com.example.entrega2.Workers.TokensWorker;
@@ -91,28 +91,37 @@ public class LoginActivity extends AppCompatActivity {
         if(usuario.isEmpty() || contrasena.isEmpty()) {
             Toast.makeText(this, getString(R.string.RellenarCampos), Toast.LENGTH_SHORT).show();
         }
-        // Se comprueba que el usuario existe en la base de datos local
+        // Se comprueba que el nombre del usuario existe en la base de datos
         else {
+            // Información a enviar a la tarea
             Data datos = new Data.Builder()
                     .putString("funcion", "validar")
                     .putString("username", username.getText().toString())
                     .build();
+            // Restricciones a cumplir: es necesaria la conexión a internet
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
+            // Se ejecuta el trabajo una única vez: 'UsuariosWorker'
             OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
 
+            // Recuperación de los resultados de la tarea
             WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                     .observe(this, status -> {
+                        // En caso de éxito 'Result.success()', se comprueba si el hash que se ha devuelto de la base de datos
+                        // pertenece a la contraseña que ha introducido el usuario
                         if (status != null && status.getState().isFinished()) {
                             String hash = status.getOutputData().getString("resultado");
                             try {
+                                // Si el usuario no existe el hash devuelto está vacío
                                 if (hash.isEmpty()){
                                     Toast.makeText(this, getString(R.string.UserPassIncorrectos), Toast.LENGTH_SHORT).show();
                                 }
+                                // Si el hash pertenece a la contraseña, se crea una nueva actividad, se comprueba si el token Firebase del dispositivo
+                                // está registrado para el usuario, y se programa la alarma para lanzar una notificación
                                 else if(PasswordAuthentication.validatePassword(password.getText().toString(), hash)) {
                                     Intent intent = new Intent(this, MainActivity.class);
                                     intent.putExtra("usuario", usuario);
@@ -121,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                                     comprobarTokens();
                                     lanzarNotificacion(usuario);
                                 }
+                                // Si el hash no pertenece a la contraseña, se le informa al usuario
                                 else {
                                     Toast.makeText(this, getString(R.string.UserPassIncorrectos), Toast.LENGTH_SHORT).show();
                                 }
@@ -143,21 +153,29 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Método encargado de obtener los token guardados para el usuario en la base de datos y comprobar si el token Firebase del dispositivo
+    // está registrado para el usuario, y en caso de no estarlo, se añade
     private void comprobarTokens(){
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "getTokens")
                 .putString("username", username.getText().toString())
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'TokensWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(TokensWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
 
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se almacenan los tokens del usuario y se obtiene el token Firebase del dispositivo,
+                    // si el token todavía no estaba almacenado, se añade
                     if (status != null && status.getState().isFinished()) {
                         String result = status.getOutputData().getString("datos");
                         try {
@@ -193,21 +211,28 @@ public class LoginActivity extends AppCompatActivity {
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
+    // Método encargado de insertar un token de Firebase para un usuario en la base de datos
     private void insertToken(String pToken){
+        // Información a enviar a la tarea
         Data datos = new Data.Builder()
                 .putString("funcion", "insertarToken")
                 .putString("username", username.getText().toString())
                 .putString("token", pToken)
                 .build();
+        // Restricciones a cumplir: es necesaria la conexión a internet
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
+        // Se ejecuta el trabajo una única vez: 'TokensWorker'
         OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(TokensWorker.class)
                 .setConstraints(restricciones)
                 .setInputData(datos)
                 .build();
+
+        // Recuperación de los resultados de la tarea
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, status -> {
+                    // En caso de éxito 'Result.success()', se informa al usuario que se ha añadido el token correctamente
                     if (status != null && status.getState().isFinished()) {
                         Toast.makeText(this, getString(R.string.NuevoToken), Toast.LENGTH_SHORT).show();
                     }
@@ -215,11 +240,11 @@ public class LoginActivity extends AppCompatActivity {
         WorkManager.getInstance(this).enqueue(otwr);
     }
 
+    // Método encargado de programar una alarma a los 30 minutos de hacer login para lanzar un servicio música + notificación
     private void lanzarNotificacion(String usuario) {
-        // Alarma para notificacion
-        // Se programa una nueva alarma (AlarmManager) con la información de la película y la fecha recibida
+        // Se programa una nueva alarma (AlarmManager) con el nombre del usuario que ha hecho login
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
+        Intent intent = new Intent(this, NotificationAlarmReceiver.class);
         intent.setAction("alarma");
         intent.putExtra("usuario", usuario);
 

@@ -11,8 +11,11 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.entrega2.R;
 
+// Diálogo que muestra la explicación de por qué es necesario el permiso de cámara (en la actividad SubirFotoActivity)
+// Diálogo tipo alerta
 public class DialogoPermisosCamara extends DialogFragment {
 
+    // Se ejecuta al crearse el diálogo
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -20,11 +23,14 @@ public class DialogoPermisosCamara extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
+        // Creación del diálogo tipo alerta
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.PermisosCamara));
         builder.setMessage(getString(R.string.RazonPermisosCamara));
 
+        // Se define el botón 'positivo' --> Cerrará el diálogo
         builder.setPositiveButton(getString(R.string.DeAcuerdo), new DialogInterface.OnClickListener() {
+            // Se ejecuta al pulsar el botón 'positivo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {}
         });

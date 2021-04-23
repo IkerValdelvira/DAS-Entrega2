@@ -3,16 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.entrega2">
 
+    <!-- Requsito de cámara -->
     <uses-feature
         android:name="android.hardware.camera2.full"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.CAMERA" />                    <!-- Permiso para usar la cámara -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />     <!-- Permiso para leer de la galería -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />    <!-- Permiso para escribir en la galería -->
+    <uses-permission android:name="android.permission.INTERNET" />                  <!-- Permiso para usar funciones mediante internet: peticiones HTTP -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />      <!-- Permiso para acceder a la geolocalización exacta -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />        <!-- Permiso para ejecutar servicios -->
+    <uses-permission android:name="android.permission.VIBRATE" />                   <!-- Permiso para acceder a la vibración del dispositivo -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />    <!-- Permiso para recibir acción tras arrancar el sistema -->
+
 
     <application
         android:allowBackup="true"
@@ -22,65 +26,50 @@
         android:supportsRtl="true"
         android:theme="@style/CustomTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Actividades.PreferenciasActivity"></activity>
-
-        <receiver
-            android:name=".Widgets.MonumentosWidget"
-            android:label="Widget DAS">
+        <activity android:name=".Actividades.PreferenciasActivity" />
+        <activity android:name=".Actividades.UbicacionActivity" />
+        <activity android:name=".Actividades.InfoFotoActivity" />
+        <activity android:name=".Actividades.SubirFotoActivity" />
+        <activity android:name=".Actividades.PuntosInteresActivity" />
+        <activity android:name=".Actividades.AmigosActivity" />
+        <activity android:name=".Actividades.RegisterActivity" />
+        <activity android:name=".Actividades.MainActivity" android:theme="@style/CustomThemeParaMain" />
+        <activity android:name=".Actividades.AnadirAmigoActivity">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="SOLICITUD" />     <!-- Abrir actividad 'AnadirAmigoActivity' al recibir mensaje FCM con acción SOLICITUD -->
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Actividades.CompartidasActivity">
             <intent-filter>
-                <action android:name="com.example.entrega2.ACTUALIZAR_WIDGET" />
+                <action android:name="COMPARTIDAS" />   <!-- Abrir actividad 'CompartidasActivity' al recibir mensaje FCM con acción COMPARTIDAS -->
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/monumentos_widget_info" />
-        </receiver>
-
+        </activity>
         <activity android:name=".Widgets.MonumentosWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Actividades.CompartidasActivity">
-            <intent-filter>
-                <action android:name="COMPARTIDAS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".Actividades.UbicacionActivity" />
-        <activity android:name=".Actividades.InfoFotoActivity" />
-        <activity android:name=".Actividades.SubirFotoActivity" /> <!-- Bradcast Receiver para la alarma de las notificaciones -->
-        <receiver android:name=".Receivers.AlarmReceiver" />
-        <receiver android:name=".Receivers.NotificationDismissedReceiver" />
-        <receiver android:name=".Receivers.WidgetReceiver" />
-
-        <service android:name=".ServicioMusicaNotificacion" />
-
-        <activity android:name=".Actividades.PuntosInteresActivity" />
-        <activity android:name=".Actividades.AmigosActivity" />
-        <activity android:name=".Actividades.AnadirAmigoActivity">
-            <intent-filter>
-                <action android:name="SOLICITUD" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".Actividades.RegisterActivity" />
-        <activity
-            android:name=".Actividades.MainActivity"
-            android:theme="@style/CustomThemeParaMain" />
         <activity android:name=".Actividades.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <receiver android:name=".Receivers.NotificationAlarmReceiver" />                    <!-- Bradcast Receiver para la alarma: ejecutar servicio música + notificación -->
+        <receiver android:name=".Receivers.NotificationDismissedReceiver" />                <!-- Bradcast Receiver detener el servicio al cancelar notificación -->
+        <receiver android:name=".Receivers.WidgetReceiver" />                               <!-- Bradcast Receiver para la alarma del widget -->
+        <receiver android:name=".Receivers.RestartAlarmsReceiver" android:enabled="true">     <!-- Broadcast Receiver para detectar cuando se ha arrancado el sistema -->
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".ServicioMusicaNotificacion" />                  <!-- Servicio: música + notificación -->
+
+        <!-- Servicio FirebaseMessagingService -->
         <service
             android:name=".ServicioFirebase"
             android:enabled="true"
@@ -90,6 +79,7 @@
             </intent-filter>
         </service>
 
+        <!-- Configuracíon recepción de mensajes FCM -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@android:drawable/stat_notify_error" />
@@ -99,10 +89,13 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCKQhVCgP94bTu2fxA6oFUcRQBkjnYR8xY" />
+
+        <!-- Fuentes personalizadas -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
+        <!-- FileProvider para almacenar las imágenes sacadas desde la aplicación -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.entrega2.provider"
@@ -112,6 +105,25 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/configalmacen" />
         </provider>
+
+        <!-- Declaración del widget -->
+        <receiver
+            android:name=".Widgets.MonumentosWidget"
+            android:label="Widget DAS">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <!-- Acción a la que tiene que reaccionar el widget -->
+            <intent-filter>
+                <action android:name="com.example.entrega2.ACTUALIZAR_WIDGET" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/monumentos_widget_info" />   <!-- Fichero de configuración -->
+
+        </receiver>
     </application>
 
 </manifest>

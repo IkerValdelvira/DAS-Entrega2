@@ -65,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // Listener 'onClick' del botón de registro del layout 'acitvity_register.xml'
-    public void onClickRegistro(View v) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public void onClickRegistro(View v) {
         String usuario = username.getText().toString();
         String contrasena1 = password.getText().toString();
         String contrasena2 = paswword2.getText().toString();
@@ -77,52 +77,60 @@ public class RegisterActivity extends AppCompatActivity {
         else if(!contrasena1.equals(contrasena2)) {
             Toast.makeText(this, getString(R.string.PassDiferentes), Toast.LENGTH_SHORT).show();
         }
-        // Se comprueba si existe un usuario con los datos introducidos en la base de datos local
+        // Se comprueba si existe un nombre de usuario con los datos introducidos en la base de datos
         else{
-            String hashPassword = PasswordAuthentication.generateStrongPasswordHash(password.getText().toString());
+            // Información a enviar a la tarea
             Data datos = new Data.Builder()
                     .putString("funcion", "validar")
                     .putString("username", username.getText().toString())
-                    .putString("password", hashPassword)
                     .build();
+            // Restricciones a cumplir: es necesaria la conexión a internet
             Constraints restricciones = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
+            // Se ejecuta el trabajo una única vez: 'UsuariosWorker'
             OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
                     .setConstraints(restricciones)
                     .setInputData(datos)
                     .build();
 
+            // Recuperación de los resultados de la tarea
             WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr.getId())
                     .observe(this, status -> {
+                        // En caso de éxito 'Result.success()', y si no existe un usuario con ese nombre, se añade un nuevo usuario con el nombre
+                        // y el hash de la contraseña introducida por el usuario, después se destruye la actividad
                         if (status != null && status.getState().isFinished()) {
                             String result = status.getOutputData().getString("resultado");
                             if(!result.isEmpty()) {
-                                // Si el usuario existe, se crea un Toast notificándolo
                                 Toast.makeText(this, getString(R.string.UsuarioRepetido), Toast.LENGTH_SHORT).show();
                             }
                             else {
-                                // Si el usuario no existe, se inserta en la base de datos local y se destruye la actividad actual
-                                Data datos2 = new Data.Builder()
-                                        .putString("funcion", "insertar")
-                                        .putString("username", username.getText().toString())
-                                        .putString("password", hashPassword)
-                                        .build();
+                                try {
+                                    String hashPassword = PasswordAuthentication.generateStrongPasswordHash(password.getText().toString());
 
-                                OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
-                                        .setConstraints(restricciones)
-                                        .setInputData(datos2)
-                                        .build();
+                                    Data datos2 = new Data.Builder()
+                                            .putString("funcion", "insertar")
+                                            .putString("username", username.getText().toString())
+                                            .putString("password", hashPassword)
+                                            .build();
 
-                                WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr2.getId())
-                                        .observe(this, status2 -> {
-                                            if (status2 != null && status2.getState().isFinished()) {
-                                                Toast.makeText(this, getString(R.string.UsuarioRegistrado), Toast.LENGTH_SHORT).show();
-                                                finish();
-                                            }
-                                        });
+                                    OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(UsuariosWorker.class)
+                                            .setConstraints(restricciones)
+                                            .setInputData(datos2)
+                                            .build();
 
-                                WorkManager.getInstance(this).enqueue(otwr2);
+                                    WorkManager.getInstance(this).getWorkInfoByIdLiveData(otwr2.getId())
+                                            .observe(this, status2 -> {
+                                                if (status2 != null && status2.getState().isFinished()) {
+                                                    Toast.makeText(this, getString(R.string.UsuarioRegistrado), Toast.LENGTH_SHORT).show();
+                                                    finish();
+                                                }
+                                            });
+
+                                    WorkManager.getInstance(this).enqueue(otwr2);
+                                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     });

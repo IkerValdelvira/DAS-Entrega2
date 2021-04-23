@@ -145,5 +145,6 @@
     <string name="Cambiar">Aldatu</string>
     <string name="AbrirCamara">Kamera Ireki</string>
     <string name="AbrirGaleria">Galeria Ireki</string>
+    <string name="EtiquetadoFallido">"Etiketa automatikoak huts egin du. "</string>
 
 </resources>

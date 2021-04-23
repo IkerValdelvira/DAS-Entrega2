@@ -25,7 +25,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-// Adaptador para el RecyclerView del catálogo de películas
+// Adaptador para el RecyclerView de fotos compartidas en la actividad CompartidasActivity
 public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolderCompartidas> {
 
     // Datos que se quieren mostrar
@@ -36,7 +36,7 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
 
     private String usuario;                     // Nombre de usuario actual
 
-    private CompartidasActivity contexto;
+    private CompartidasActivity contexto;       // Contexto de la actividad que va a mostrar el ListView personalizado: CompartidasActivity
 
     // Constructor del adaptador
     public AdaptadorRecyclerCompartidas(CompartidasActivity pContexto, String pUsuario, String[] pIds, String[] pUsuarios, String[] pTitulos) {
@@ -48,7 +48,7 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
         seleccionados = new boolean[titulos.length];
     }
 
-    // 'Infla' el layout definido para cada elemento (item_layout.xml) y crea y devuelve una instancia de ViewHolder
+    // 'Infla' el layout definido para cada elemento (item_layout_compartidas.xml) y crea y devuelve una instancia de ViewHolder
     @NonNull
     @Override
     public ViewHolderCompartidas onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,6 +66,7 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
         holder.titulo.setText(titulos[position]);
         holder.usuarioFoto.setText(contexto.getString(R.string.CompartidaPor) + " " +  usuarios[position]);
 
+        // Se descarga la imagen del almacenamiento Firebase Cloud Storage y se muestra en el ImageView
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         StorageReference pathReference = storageRef.child(ids[position]);
@@ -76,12 +77,12 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
             }
         });
 
-        // Listener 'onClick' para cada View
+        // Listener 'onLongClick' para cada View
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una película)
+            // Se ejecuta al pulsar prolongadamente en un itemView (cuando se pulsa prolongadamente en un CardView que contiene la información de una foto)
             @Override
             public boolean onLongClick(View view) {
-                // Se crea un diálogo DialogoAñadirFavoritos con las opciones de listas de favoritos para añadir la película actual
+                // Se crea un diálogo DialogoEliminarCompartida para confirmar que el usuario quiere eliminar la foto compartida
                 DialogFragment dialogoEliminarCompartida = new DialogoEliminarCompartida(holder.usuarioFoto.getText().toString().split(" ")[1], holder.id, usuario);
                 dialogoEliminarCompartida.show(contexto.getSupportFragmentManager(), "eliminar_compartida");
                 return false;
@@ -90,10 +91,10 @@ public class AdaptadorRecyclerCompartidas extends RecyclerView.Adapter<ViewHolde
 
         // Listener 'onClick' para cada View
         holder.itemView.setOnClickListener(new View.OnClickListener() {
-            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una película)
+            // Se ejecuta al pulsar en un itemView (cuando se pulsa en un CardView que contiene la información de una foto)
             @Override
             public void onClick(View view) {
-                // Se crea un diálogo DialogoAñadirFavoritos con las opciones de listas de favoritos para añadir la película actual
+                // Se crea un diálogo DialogoEnviarComentario que deja escribir un comentario para enviar al usuario propietario de la foto compartida
                 DialogFragment dialogoEnviarComentario = new DialogoEnviarComentario(holder.usuarioFoto.getText().toString().split(" ")[1], holder.titulo.getText().toString());
                 dialogoEnviarComentario.show(contexto.getSupportFragmentManager(), "enviar_comentario");
             }

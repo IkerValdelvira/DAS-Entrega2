@@ -11,8 +11,11 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.entrega2.R;
 
+// Diálogo que muestra la explicación de por qué es necesario el permiso de geolocalización (en las actividades SubirFotoActivity, UbicacionActivity y PuntosInteresActivity)
+// Diálogo tipo alerta
 public class DialogoPermisosLocalizacion extends DialogFragment {
 
+    // Se ejecuta al crearse el diálogo
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -20,11 +23,14 @@ public class DialogoPermisosLocalizacion extends DialogFragment {
 
         setRetainInstance(true);        // Mantiene la información del dialogo tras rotación del dispositivo
 
+        // Creación del diálogo tipo alerta
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.PermisosLocalizacion));
         builder.setMessage(getString(R.string.RazonPermisosLocalizacion));
 
+        // Se define el botón 'positivo' --> Cerrará el diálogo
         builder.setPositiveButton(getString(R.string.DeAcuerdo), new DialogInterface.OnClickListener() {
+            // Se ejecuta al pulsar el botón 'positivo'
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {}
         });

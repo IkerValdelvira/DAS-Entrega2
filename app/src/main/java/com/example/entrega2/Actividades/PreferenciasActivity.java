@@ -15,6 +15,7 @@ import com.example.entrega2.ServicioMusicaNotificacion;
 
 import java.util.Locale;
 
+// Actividad que muestra las preferencias de la aplicación y da opción a editarlas: el idioma de la aplicación
 public class PreferenciasActivity extends AppCompatActivity implements Preferencias.ListenerPreferencias {
 
     private String usuario;                         // Nombre del usuario que ha creado la actividad
@@ -49,7 +50,7 @@ public class PreferenciasActivity extends AppCompatActivity implements Preferenc
     // Método sobrescrito de la interfaz 'Preferencias.ListenerPreferencias' --> Se ejecuta al cambiar la preferencia 'idioma'
     @Override
     public void alCambiarIdioma() {
-        // Se destruye la actividad y se vuelve a crear --> Al crearse de nuevo se establecerá la nueva localización en el método 'onCreate'
+        // Se destruye la actividad actual y se abre una nueva actividad MainActivity, destruyendo la anterior
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("usuario", usuario);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
