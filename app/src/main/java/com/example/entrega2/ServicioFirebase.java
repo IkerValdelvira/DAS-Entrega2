@@ -25,7 +25,7 @@ public class ServicioFirebase extends FirebaseMessagingService {
 
     public ServicioFirebase(){}
 
-    // Método que se ejecuta al recivir un mensaje FCM cuando la aplicación está en ejecución (no se ejecuta si está en background)
+    // Método que se ejecuta al recibir un mensaje FCM cuando la aplicación está en ejecución (no se ejecuta si está en background)
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // Si el mensaje FCM viene con datos, se recogen y se guardan en las variables
         if (remoteMessage.getData().size() > 0) {

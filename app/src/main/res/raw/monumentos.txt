@@ -75,7 +75,7 @@ Fontana di Trevi, Italia --> 41.9009778;12.483285
 Templo dorado, India --> 31.6197265;74.8773324
 Basílica del Sagrado Corazón en París, Francia --> 48.8868058;2.3430153
 Panteón de Roma, Italia --> 41.8986159;12.4768334
-Lonja de los Paños en Cracovia, Polonia --> 50.0617022,19.937357
+Lonja de los Paños en Cracovia, Polonia --> 50.0617022;19.937357
 Foro Romano en Roma, Italia --> 41.8917237;12.4866715
 Ruinas de Tikal, Guatemala --> 17.22529;-89.6117
 Muro de Berlín, Alemania --> 52.5034457;13.4439406

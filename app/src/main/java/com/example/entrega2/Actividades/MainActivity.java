@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements DialogoDescargarF
     // Método sobrescrito de la interfaz 'DialogoDescargarFoto.ListenerdelDialogo' --> Se ejecuta al aceptar el diálogo para eliminar una foto
     @Override
     public void descargarFoto(Uri uri) {
-        // Se descargar una imagen del almacenamiento Firebase Cloud Storage y se guarda en el directorio Pictures del dispositivo
+        // Se descargar una imagen del almacenamiento Firebase Cloud Storage y se guarda en el directorio Pictures del dispositivo (DownloadManager)
         File path = new File(uri.toString());
         String fileName = path.getName();
         final DownloadManager downloadManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);

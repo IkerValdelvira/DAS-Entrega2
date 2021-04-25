@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Entrega2</string>
     <string name="NombreUsuario">Erabiltzaile izena...</string>
     <string name="Contraseña">Pasahitza...</string>
     <string name="Entrar">Sartu</string>

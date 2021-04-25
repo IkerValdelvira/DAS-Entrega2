@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DAS Pictures</string>
+    <string name="app_name" translatable="false">DAS Pictures</string>
     <string name="NombreUsuario">Nombre de usuario...</string>
     <string name="Contraseña">Contraseña...</string>
     <string name="Entrar">Entrar</string>

@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.example.entrega2.ServicioMusicaNotificacion;
 
-// BroadcastReceiver que se utiliza para recibir el mensaje broadcast lanzado al eliminar la noticificación (cuando el usuario arrastra la notificación y la elimina) creada en el servico ServicioMusicaNotificacion
+// BroadcastReceiver que se utiliza para recibir el mensaje broadcast lanzado al eliminar la noticificación (cuando el usuario arrastra la notificación y la elimina) creada en el servicio ServicioMusicaNotificacion
 public class NotificationDismissedReceiver extends BroadcastReceiver {
 
     // Se ejecuta al recibir un aviso de mensaje de broadcast

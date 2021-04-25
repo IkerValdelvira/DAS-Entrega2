@@ -203,6 +203,9 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
                 startActivityForResult(elIntent, CODIGO_FOTO_ARCHIVO);
             }
         }
+
+        latitud = "";
+        longitud = "";
     }
 
     // Metodo encargado de recoger el resultado obtenido de los intents para abrir la galería o la cámara
@@ -427,6 +430,19 @@ public class SubirFotoActivity extends AppCompatActivity implements DialogoCrear
                     // En caso de éxito 'Result.success()', se destruye la actividad actual y se crea una nueva actividad MainActivity, destruyendo la anterior
                     if (status != null && status.getState().isFinished()) {
                         Toast.makeText(this, getString(R.string.SubiendoFoto), Toast.LENGTH_LONG).show();
+
+                        if (origenFoto.equals("camara")) {
+                            // Elimina la imagen del directorio files de la aplicación
+                            boolean deleted = false;
+                            try {
+                                deleted = fichImg.delete();
+                            } catch (SecurityException e) {
+                                e.printStackTrace();
+                            }
+                            if (!deleted) {
+                                fichImg.deleteOnExit();
+                            }
+                        }
 
                         // Es necesario un delay de unos segundos para que la foto se pueda guardar en el almacenamiento Firebase Cloud Storage
                         // y se pueda descargar al abrir la actividad MainActivity
